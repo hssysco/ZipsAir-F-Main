@@ -1,0 +1,15 @@
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\bin\armproc.dll" 
+
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\bin\armjlink2.dll" 
+
+"D:\Project\HanSungSysco\1_Software\Data\GD32F30x_Demo_Suites_V2.4.4\GD32F30x_Demo_Suites_V2.4.4\GD32303C_EVAL_Demo_Suites\Projects\01_GPIO_Running_LED\EWARM\Debug\Exe\Project.out" 
+
+--plugin="C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\bin\armbat.dll" 
+
+--device_macro="C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\config\debugger\GD\GD32F30x.dmac" 
+
+--flash_loader="C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\config\flashloader\GD\FlashGD32F303xE.board" 
+
+
+
+
