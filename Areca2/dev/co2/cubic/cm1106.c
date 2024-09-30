@@ -121,7 +121,7 @@ void Cm1106Task(void* arg)
 				return;
 		}
 
-		rc = SerialRead(CO2, buf, 8);
+//		rc = SerialRead(CO2, buf, 8);
 		if (rc<0) 
 		{
 			return;

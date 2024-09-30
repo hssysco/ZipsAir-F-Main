@@ -76,6 +76,7 @@ static struct
 }roomid_args;
 
 uint16_t Uart_TxTime = 0;
+uint16_t Uart_RxTime = 0;
 
 extern void gpio_check_task();
 extern FlagStatus gd_key_state_get(key_typedef_enum key);
@@ -291,7 +292,7 @@ void InitSys (void)
 	InitSerialDriver();
     InitSerilInterrupt();
 
-	OffAllLed();
+//	OffAllLed();
 
 	InitConsole();
 
@@ -1273,7 +1274,7 @@ void app_main()
     
 //	InitRTC();
 
-	OnLed(LED_POWER);
+//	OnLed(LED_POWER);
 	InitAbovComms();
 	InitThermostatComms();
 	InitControlFuncs();
@@ -1293,15 +1294,15 @@ void app_main()
     
     while(1) {
         gpio_check_task();
-        if(Uart_TxTime >= 100) {
-            PIDTask();
-            AnalysisTask();
+        if(Uart_TxTime >= 200) {
+//            PIDTask();
+//            AnalysisTask();
             
             AbovCommTask();
             ThermostatCommTask();
             
-            Cm1106Task(&Co2Dev);
-            Pm2008Task(&DustDev);
+//            Cm1106Task(&Co2Dev);
+//            Pm2008Task(&DustDev);
             
 //            FactoryTask();
             Uart_TxTime = 0;

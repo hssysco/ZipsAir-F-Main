@@ -53,8 +53,6 @@ typedef enum ModeType{
 #define COM4_GPIO_PORT              GPIOC
 #define COM4_GPIO_CLK               RCU_GPIOC
 
-#define UART_RTS	(UART_PIN_NO_CHANGE)
-#define UART_CTS	(UART_PIN_NO_CHANGE)
 
 
 void InitSerialDriver(void);

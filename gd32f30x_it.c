@@ -52,11 +52,17 @@ extern FlagStatus    UART4_RX_Sts;
 //extern uint32_t     nbr_data_to_read, nbr_data_to_send;
 //extern uint16_t     tx_counter, rx_counter;
 extern uint16_t     Uart_TxTime;
+extern uint16_t     Uart_RxTime;
 
 extern uint8_t AboveRxData[100];
 extern uint8_t AboveRxCnt;
 extern uint8_t AboveRxstart;
 extern uint8_t AboveRxend;
+
+extern uint8_t ThermoRxData[100];
+extern uint8_t ThermoRxstart;
+extern uint8_t ThermoRxend;
+extern uint8_t ThermoRxCnt;
 
 //==============================================================================
 //      NMI exception
@@ -140,6 +146,8 @@ void SysTick_Handler(void)
     delay_decrement();
     if(Uart_TxTime < 60000)
        Uart_TxTime++;
+    if(Uart_RxTime < 60000)
+       Uart_RxTime++;
 }
 
 
@@ -148,58 +156,10 @@ void SysTick_Handler(void)
 //=============================================================================
 void USART0_IRQHandler(void)
 {
-    if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_RBNE)){
-        usart_flag_clear(USART0, USART_FLAG_RBNE);
-    }       
-    if((RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_TC))||(UART1_TX_Sts == SET)){
-        UART1_TX_Sts = RESET;
-        usart_flag_clear(USART0, USART_FLAG_TC);
-    }
-}
-
-
-//==============================================================================
-//      USART1 exception
-//=============================================================================
-void USART1_IRQHandler(void)
-{
-    if(RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_RBNE)){
-        /* read one byte from the receive data register */
-        usart_flag_clear(USART1, USART_FLAG_RBNE);
-    }       
-
-    if((RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_TC))||(UART2_TX_Sts == SET)){
-        UART2_TX_Sts = RESET;
-        usart_flag_clear(USART1, USART_FLAG_TC);
-    }
-}
-
-//==============================================================================
-//      UART3 exception
-//=============================================================================
-void UART3_IRQHandler(void)
-{
-    if(RESET != usart_interrupt_flag_get(UART3, USART_INT_FLAG_RBNE)){
-        usart_flag_clear(UART3, USART_FLAG_RBNE);
-    }       
-    if((RESET != usart_interrupt_flag_get(UART3, USART_INT_FLAG_TC))||(UART3_TX_Sts == SET)){
-        /* write one byte to the transmit data register */
-        UART3_TX_Sts = RESET;
-        usart_flag_clear(UART3, USART_FLAG_TC);
-    }
-}
-
-
-//==============================================================================
-//      UART4 exception
-//=============================================================================
-
-
-void UART4_IRQHandler(void)
-{
+   
     uint8_t rx_tmp;
     
-    if(RESET != usart_interrupt_flag_get(UART4, USART_INT_FLAG_RBNE)){
+    if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_RBNE)){
         /* read one byte from the receive data register */
         if(AboveRxCnt < 100) {
             rx_tmp = (uint8_t)usart_data_receive(UART4);
@@ -215,14 +175,90 @@ void UART4_IRQHandler(void)
                 AboveRxend = 1;
         }
         
-//            if((rxstart == 1)&&(AboveRxData[i] == PACKET_FAU_TAIL)) {
         if(AboveRxCnt >= 99) {
             AboveRxCnt = 0;
             AboveRxstart = 0;
         }
+        Uart_RxTime = 0;
+        usart_flag_clear(USART0, USART_FLAG_RBNE);
+    }       
+
+    if((RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_TC))||(UART1_TX_Sts == SET)){
+        UART1_TX_Sts = RESET;
+        usart_flag_clear(USART0, USART_FLAG_TC);
+    }
+}
+
+
+//==============================================================================
+//      USART1 exception
+//=============================================================================
+void USART1_IRQHandler(void)
+{
+    if(RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_RBNE)){
+        /* read one byte from the receive data register */
+        usart_flag_clear(USART1, USART_FLAG_RBNE);
+        Uart_RxTime = 0;
+    }       
+
+    if((RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_TC))||(UART2_TX_Sts == SET)){
+        UART2_TX_Sts = RESET;
+        usart_flag_clear(USART1, USART_FLAG_TC);
+    }
+}
+
+//==============================================================================
+//      UART3 exception
+//=============================================================================
+void UART3_IRQHandler(void)
+{
+    if(RESET != usart_interrupt_flag_get(UART3, USART_INT_FLAG_RBNE)){
+        usart_flag_clear(UART3, USART_FLAG_RBNE);
+        Uart_RxTime = 0;
+    }       
+    if((SET == usart_interrupt_flag_get(UART3, USART_INT_FLAG_TC))||(UART3_TX_Sts == SET)){
+        /* write one byte to the transmit data register */
+        UART3_TX_Sts = RESET;
+        usart_interrupt_flag_clear(UART3, USART_INT_FLAG_TC);
+        usart_flag_clear(UART3, USART_FLAG_TC);
+    }
+}
+
+
+//==============================================================================
+//      UART4 exception
+//=============================================================================
+
+
+void UART4_IRQHandler(void)
+{
+    uint8_t rx_tmp;
+
+    if(RESET != usart_interrupt_flag_get(UART4, USART_INT_FLAG_RBNE)){
+        /* read one byte from the receive data register */
+        if(ThermoRxCnt < 100) {
+            rx_tmp = (uint8_t)usart_data_receive(UART4);
+        }
+        if(rx_tmp == 0x7E) {
+            ThermoRxstart = 1;
+            ThermoRxend = 0;
+            ThermoRxCnt = 0;            
+        }    
+        if(ThermoRxstart == 1) {
+            ThermoRxData[ThermoRxCnt++] = rx_tmp;
+            if(rx_tmp == 0x7f)
+                ThermoRxend = 1;
+        }
+        
+        if(ThermoRxCnt >= 99) {
+            ThermoRxCnt = 0;
+            ThermoRxstart = 0;
+        }
+        Uart_RxTime = 0;
+        usart_flag_clear(UART4, USART_FLAG_RBNE);
 
     }       
-    if((RESET != usart_interrupt_flag_get(UART4, USART_INT_FLAG_TC))||(UART4_TX_Sts == SET)){
+    else if((RESET != usart_interrupt_flag_get(UART4, USART_INT_FLAG_TC))||(UART4_TX_Sts == SET)){
         /* write one byte to the transmit data register */
         UART4_TX_Sts = RESET;
         usart_flag_clear(UART4, USART_FLAG_TC);

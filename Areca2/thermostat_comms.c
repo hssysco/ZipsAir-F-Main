@@ -87,17 +87,21 @@ AboveRxInfoT *pthermoRxData = NULL;
 
 extern FlagStatus    UART1_TX_Sts;
 extern FlagStatus    UART1_RX_Sts;
+extern uint16_t     Uart_RxTime;
 
-extern uint8_t AboveRxData[100];
-extern uint8_t AboveRxCnt;
-extern uint8_t AboveRxstart;
-extern uint8_t AboveRxend;
 
-static void SendData(int channel, unsigned char *pData, unsigned int DataLen)
-{
-	SerialWrite(channel, pData, DataLen);
-	return;
-}
+uint8_t ThermoRxstart = 0;
+uint8_t ThermoRxend = 0;
+uint8_t ThermoRxData[100];
+uint8_t ThermoRxCnt = 0;
+
+extern void delay_1ms(uint32_t count);
+
+//static void SendData(int channel, unsigned char *pData, unsigned int DataLen)
+//{
+//	SerialWrite(channel, pData, DataLen);
+//	return;
+//}
 
 static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 {
@@ -109,7 +113,12 @@ static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 		return -1;
 	}
 
-    while(AboveRxend == 0);    
+    Uart_RxTime = 0;
+    while(ThermoRxend == 0) {
+        if(Uart_RxTime >= 300) {
+            return -1;
+        }
+    }    
     packet_size = pData[2];
     packet_size += 6;
     read_data = pData[2];
@@ -127,15 +136,15 @@ static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
     }
 
 
-	*pDataLen = AboveRxCnt;
+	*pDataLen = ThermoRxCnt;
 
 	return 0;
 }
 
+static char skipStaticData = false;
 int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 {
 	int ret = 0, idx = 0;
-	unsigned char Packet[MAX_PACKET_SIZE];
 	char StrBuf[MAX_SERIAL_STR_LEN];
 	unsigned char NumofItems = 0, revLen = 0, revPktId = 0, i;
 	unsigned int value = 0;
@@ -143,8 +152,8 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 	unsigned short chksum = 0;
 	unsigned char *pItem = NULL;
 	static unsigned char needToSync = false;
-	static char skipStaticData = false;
 	static int disconnect_cnt = 0;
+	unsigned char Packet[MAX_PACKET_SIZE];
 
 
 
@@ -269,25 +278,31 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
     
 
     gpio_bit_set(GPIOB, GPIO_PIN_4);
-	SendData(3, Packet, idx);
+    delay_1ms(1);
+    SerialWrite(3, &Packet[0], idx);
+    delay_1ms(1);
     gpio_bit_reset(GPIOB, GPIO_PIN_4);
+
+    ThermoRxCnt = 0;
+	memset(ThermoRxData, 0, sizeof(ThermoRxData));
     
-    AboveRxCnt = 0;
-	memset(AboveRxData, 0, sizeof(AboveRxData));
+    Uart_RxTime = 0;
+    ThermoRxend = 0;
+    while(ThermoRxend == 0) {
+        if(Uart_RxTime > 200) return -1;
+    }
     
-    AboveRxend = 0;
-    while(AboveRxend == 0);
-    AboveRxend = 0;
-    AboveRxstart = 0;
-    memcpy(pthermoRxData->Serial, AboveRxData, AboveRxCnt);
+    ThermoRxend = 0;
+    ThermoRxstart = 0;
+    memcpy(pthermoRxData->Serial, ThermoRxData, ThermoRxCnt);
     
-	ret = ReceiveData(AboveRxData, &revLen);
+	ret = ReceiveData(ThermoRxData, &revLen);
 	if(ret == 0 && revLen > 0)
 	{
 		disconnect_cnt = 0;
 		p_SystemInfo->ConnType |= DEV_CONNECTION_RS485;
 
-		revPktId = AboveRxData[1];
+		revPktId = ThermoRxData[1];
 		if(needToSync)
 		{
 			if(revPktId > 2)
@@ -303,8 +318,8 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 			p_CommInfo->SyncWired = 1;
 		}
 
-		NumofItems = AboveRxData[3];
-		pItem = &(AboveRxData[4]);
+		NumofItems = ThermoRxData[3];
+		pItem = &(ThermoRxData[4]);
 
 		for(i=0; i<NumofItems; i++)
 		{

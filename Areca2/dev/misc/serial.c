@@ -60,9 +60,13 @@ void com_init(uint32_t com, uint32_t baudrate)
     }
     
     /* enable GPIO clock */
-    rcu_periph_clock_enable(COM_GPIO_CLK[com_id]);
     if(COM4== com){        
-        rcu_periph_clock_enable(RCU_GPIOD);
+        rcu_periph_clock_enable(RCU_GPIOC);
+//        rcu_periph_clock_enable(RCU_GPIOD);
+        rcu_periph_clock_enable(RCU_AF);
+    }
+    else {
+        rcu_periph_clock_enable(COM_GPIO_CLK[com_id]);
     }
     
     /* enable USART clock */
@@ -75,14 +79,18 @@ void com_init(uint32_t com, uint32_t baudrate)
 
     /* connect port to USARTx_Rx */
     if(COM4== com){
-        gpio_init(GPIOD, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, COM4_RX_PIN);
+        gpio_init(GPIOD, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, COM4_RX_PIN);
     }
     else {
-        gpio_init(COM_GPIO_PORT[com_id], GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, COM_RX_PIN[com_id]);
+        gpio_init(COM_GPIO_PORT[com_id], GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, COM_RX_PIN[com_id]);
     }
     
     /* USART configure */
     usart_deinit(com);
+    usart_word_length_set(USART0, USART_WL_8BIT);
+    usart_stop_bit_set(USART0, USART_STB_1BIT);
+    usart_parity_config(USART0, USART_PM_NONE);
+
     usart_baudrate_set(com, baudrate);
     usart_receive_config(com, USART_RECEIVE_ENABLE);
     usart_transmit_config(com, USART_TRANSMIT_ENABLE);
@@ -128,143 +136,52 @@ void InitSerilInterrupt(void)
 }
 
 
-void uart_write_bytes(uint8_t uart_num, const char *src, size_t size) {
-    uint8_t i;
-    
-    for (i = 0; i < sizeof(src); i++) {
-        if(uart_num == 0) {
-            UART1_TX_Sts = SET;
-            usart_data_transmit(COM1, *src); 
-//            while (usart_flag_get(COM1, USART_FLAG_TC) == RESET); // Wait for transmit buffer empty           
-            while (UART1_TX_Sts == SET); // Wait for transmit buffer empty
-        }
-        else if(uart_num == 1) {
-            UART2_TX_Sts = SET;
-            usart_data_transmit(COM2, *src); 
-            while (UART2_TX_Sts == SET); // Wait for transmit buffer empty
-        } 
-        else if(uart_num == 2) {
-            UART3_TX_Sts = SET;
-            usart_data_transmit(COM3, *src); 
-            while (UART3_TX_Sts == SET); // Wait for transmit buffer empty
-        }
-        else if(uart_num == 3) {
-            UART4_TX_Sts = SET;
-            usart_data_transmit(COM4, *src); 
-            while (UART4_TX_Sts == SET); // Wait for transmit buffer empty
-        }
+void uart_write_byte(uint8_t uart_num, const char *src) {
+
+    if(uart_num == 0) {
+        UART1_TX_Sts = SET;
+        while (usart_flag_get(COM1, USART_FLAG_TC) == SET); 
+        usart_data_transmit(COM1, *src); 
+        while (UART1_TX_Sts == SET); 
+    }
+    else if(uart_num == 1) {
+        UART2_TX_Sts = SET;
+        while (usart_flag_get(COM2, USART_FLAG_TC) == SET); 
+        usart_data_transmit(COM2, *src); 
+        while (UART2_TX_Sts == SET); 
+    } 
+    else if(uart_num == 2) {
+        UART3_TX_Sts = SET;
+        while (usart_flag_get(COM3, USART_FLAG_TC) == SET); 
+        usart_data_transmit(COM3, *src); 
+        while (UART3_TX_Sts == SET); 
+    }
+    else if(uart_num == 3) {
+        UART4_TX_Sts = SET;
+        while (usart_flag_get(COM4, USART_FLAG_TC) == SET); 
+        usart_data_transmit(COM4, *src); 
+        while (UART4_TX_Sts == SET); 
     }
 }
 
 int SerialWrite(uint8_t channel, unsigned char *pData, unsigned int dataLen) 
 {
+    uint8_t i;
+
 	if((channel >= CHNNEL_TYPE_MAX ) || (pData == NULL)) 
 	{
 		return -1;
 	}
-	
-    uart_write_bytes(channel, (const char *)pData, dataLen);
- 
+    
+    for (i = 0; i < dataLen; i++) {
+
+        uart_write_byte(channel, (char *)pData++);
+    }
 	return 0;
 }
 
-//int uart_read_bytes(uart_port_t uart_num, uint8_t *buf, size_t length, TickType_t ticks_to_wait) {
-int uart_read_bytes(uint8_t channel, uint8_t *buf, size_t length) {
-    // Error checking (e.g., validate uart_num, buf, length)
 
-    // Access the UART hardware registers for the given port
-//    uart_dev_t *uart = &UART[uart_num];
-//
-    // Check for available bytes in the UART receive FIFO
-    int bytes_read = 0;
-    while (bytes_read < length) {
-        // Read a byte from the FIFO if available
-        // (This might involve waiting if the FIFO is empty)
 
-        // Increment bytes_read
-    }
-
-    // Return the number of bytes successfully read
-}
-
-extern uint8_t AboveRxCnt;
-
-int SerialRead(uint8_t channel, unsigned char *pData, unsigned int dataLen) 
-{
-
-	int ret = -1;
-	uint16_t i = 0, readData = 0;
-	uint8_t index = 0, cnt = 0;
-	int tmp = 0;
-
-	if((channel >= CHNNEL_TYPE_MAX ) || (pData == NULL)) 
-	{
-		return ret;
-	}
-
-    if(channel == 3) {
-        while(AboveRxCnt<dataLen);
-        
-    }
-    
-//	if(channel <= THERMOSTAT)
-//	{
-//		if(channel == AVOVE) 
-//		{
-////			ret = uart_read_bytes(UART_NUM_1, pData, dataLen, 200);
-//		}
-//		else 
-//		{
-////			ret = uart_read_bytes(UART_NUM_2, pData, dataLen, 20 / portTICK_RATE_MS);
-//		}
-//	}
-//	else 
-//	{
-//		index = (channel - CO2);		
-//
-//		while(1) 
-//		{
-////			tmp =  SWUartAvail(index);
-//			if(tmp > 0) 
-//			{
-//				for(i = 0; i < tmp; i++) 
-//				{
-////					SWUartRead (index, pData);
-//					pData++;			
-//				}
-//
-//				if(dataLen >= tmp) 
-//				{
-//					dataLen -= tmp;
-//				}
-//
-//				readData += tmp;
-//				if(readData == dataLen) 
-//				{
-//					break;
-//				}				
-//			}
-//			else 
-//			{
-//				if(cnt >= 20) 
-//				{
-//					break;
-//				}
-//				
-//				cnt++;
-////				usleep(10000); /* 10ms */
-//			}
-//		}
-//
-//		if(readData > 0)
-//			ret = readData;
-//		else
-//			ret = -2;
-//
-//	}
-
-	return ret;
-}
 
 
 
