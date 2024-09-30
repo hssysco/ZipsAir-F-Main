@@ -150,25 +150,25 @@ int CommandToAbov( AboveTxInfoT *pTxData,  AboveRxInfoT *pRxData )
 //		NumofItems = 2;
 //	}
     PktId = 0;
-    PktLen = 0x22;
-//    PktLen = 10;
-    NumofItems = 6;
+    PktLen = 5;
+//    PktLen = 6;
+    NumofItems = 1;
 
 	Packet[idx++] = PACKET_FAU_HEADER;
 	Packet[idx++] = PktId;
 	Packet[idx++] = PktLen;
 	Packet[idx++] = NumofItems;
     
-    Packet[idx++] = 0x03;                   // Item Version
-    Packet[idx++] = 0x02;                   // Item length
-    Packet[idx++] = 'a';                    // 'a' : Main SW, 't' : test version
-    Packet[idx++] = 0x0D;                   // Version 1.3
+//    Packet[idx++] = 0x03;                   // Item Version
+//    Packet[idx++] = 0x02;                   // Item length
+//    Packet[idx++] = 'a';                    // 'a' : Main SW, 't' : test version
+//    Packet[idx++] = 0x0D;                   // Version 1.3
 
     
 	Packet[idx++] = ITEM_FAN_STATE;         /* item type: Fan State */
 	Packet[idx++] = FAU_LEN_FAN_STATE;      /* item length */
 //	Packet[idx++] = pTxData->Power;         /* fau power */
-	Packet[idx++] = 2;		/* fau level */
+	Packet[idx++] = 0;		/* fau level */
 //	Packet[idx++] = pTxData->FanLevel;		/* fau level */
 //	Packet[idx++] = 0; /* erv level: do not consider erv level. just send 0 for this position */
 
@@ -185,47 +185,47 @@ int CommandToAbov( AboveTxInfoT *pTxData,  AboveRxInfoT *pRxData )
 		Packet[idx++] = 0;
 	}
     
-	Packet[idx++] = ITEM_RPM;           /* item type: RPM */
-	Packet[idx++] = FAU_LEN_RPM;        /* Item length*/
- 	Packet[idx++] = 0x00;               /* PPS High*/
-	Packet[idx++] = 0x8A;               /* PPS Low*/
-   
-//	Packet[idx++] = ITEM_TIMER;         /* item type: TIMER */
-//	Packet[idx++] = FAU_LEN_TIMER;      /* item type: TIMER */
-// 	Packet[idx++] = 0x00;               /* TIMER High*/
-//	Packet[idx++] = 0x01;               /* TIMER Low*/
-
-    /* item type: Filter */
-	Packet[idx++] = ITEM_FILTER; 
-	Packet[idx++] = FAU_LEN_FILTER; /* item length */
-	Packet[idx++] = pTxData->FltTmrRst; /* filter time reset */
-	pTxData->FltTmrRst = 0;    
-	Packet[idx++] = 0; /* filter time used H */
-	Packet[idx++] = 0; /* filter time used L */
-	Packet[idx++] = (pTxData->FltTmrLmt>>8)&0xFF; /* filter life time H */
-	Packet[idx++] = (pTxData->FltTmrLmt)&0xFF; /* filter life time L */
-	
-	if (NumofItems > 2) 
-	{
-		Packet[idx++] = ITEM_VSP1; /* item type: VSP */
-		Packet[idx++] = FAU_LEN_VSP1; /* item length */
-//		Packet[idx++] = pTxData->VSP[0]; /* vsp1 */
-//		Packet[idx++] = pTxData->VSP[1]; /* vsp2 */
-//		Packet[idx++] = pTxData->VSP[2]; /* vsp3 */
-//		Packet[idx++] = pTxData->VSP[3]; /* vsp4 */
-//		Packet[idx++] = pTxData->VSP[4]; /* vsp5 */
-
-		Packet[idx++] = 0x2d; /* vsp2 */
-		Packet[idx++] = 0x2e; /* vsp3 */
-		Packet[idx++] = 0x30; /* vsp4 */
-		Packet[idx++] = 0x36; /* vsp5 */
-		Packet[idx++] = 0x3e; /* vsp5 */
-		Packet[idx++] = 0; // offset
-	}
-	
- 	Packet[idx++] = ITEM_ERROR; 
-	Packet[idx++] = FAU_LEN_ERR;    /* item length */
- 	Packet[idx++] = 0;              /* bit0-Motor, bit1-Door, 2-Filter */
+//	Packet[idx++] = ITEM_RPM;           /* item type: RPM */
+//	Packet[idx++] = FAU_LEN_RPM;        /* Item length*/
+// 	Packet[idx++] = 0x00;               /* PPS High*/
+//	Packet[idx++] = 95;               /* PPS Low*/
+//   
+////	Packet[idx++] = ITEM_TIMER;         /* item type: TIMER */
+////	Packet[idx++] = FAU_LEN_TIMER;      /* item type: TIMER */
+//// 	Packet[idx++] = 0x00;               /* TIMER High*/
+////	Packet[idx++] = 0x01;               /* TIMER Low*/
+//
+//    /* item type: Filter */
+//	Packet[idx++] = ITEM_FILTER; 
+//	Packet[idx++] = FAU_LEN_FILTER; /* item length */
+//	Packet[idx++] = pTxData->FltTmrRst; /* filter time reset */
+//	pTxData->FltTmrRst = 0;    
+//	Packet[idx++] = 0; /* filter time used H */
+//	Packet[idx++] = 0; /* filter time used L */
+//	Packet[idx++] = (pTxData->FltTmrLmt>>8)&0xFF; /* filter life time H */
+//	Packet[idx++] = (pTxData->FltTmrLmt)&0xFF; /* filter life time L */
+//	
+//	if (NumofItems > 2) 
+//	{
+//		Packet[idx++] = ITEM_VSP1; /* item type: VSP */
+//		Packet[idx++] = FAU_LEN_VSP1; /* item length */
+////		Packet[idx++] = pTxData->VSP[0]; /* vsp1 */
+////		Packet[idx++] = pTxData->VSP[1]; /* vsp2 */
+////		Packet[idx++] = pTxData->VSP[2]; /* vsp3 */
+////		Packet[idx++] = pTxData->VSP[3]; /* vsp4 */
+////		Packet[idx++] = pTxData->VSP[4]; /* vsp5 */
+//
+//		Packet[idx++] = 0x2d; /* vsp2 */
+//		Packet[idx++] = 0x2e; /* vsp3 */
+//		Packet[idx++] = 0x30; /* vsp4 */
+//		Packet[idx++] = 0x36; /* vsp5 */
+//		Packet[idx++] = 0x3e; /* vsp5 */
+//		Packet[idx++] = 0; // offset
+//	}
+//	
+// 	Packet[idx++] = ITEM_ERROR; 
+//	Packet[idx++] = FAU_LEN_ERR;    /* item length */
+// 	Packet[idx++] = 0;              /* bit0-Motor, bit1-Door, 2-Filter */
   
 // 	Packet[idx++] = ITEM_TEST_MODE; 
 // 	Packet[idx++] = FAU_LEN_TETSMOD; 
@@ -240,13 +240,14 @@ int CommandToAbov( AboveTxInfoT *pTxData,  AboveRxInfoT *pRxData )
 	Packet[idx++] = PACKET_FAU_TAIL;
 
     gpio_bit_set(GPIOA, GPIO_PIN_1);
+	SendData(1, Packet, idx); // motor
+    gpio_bit_reset(GPIOA, GPIO_PIN_1);
+
 //	SendData(AVOVE, Packet, idx);
 //	SendData(0, Packet, idx); // Zigbee
 //	SendData(1, Packet, idx); // motor
 //	SendData(2, Packet, idx); // sensor
 //	SendData(3, Packet, idx); // Thermo
-	SendData(1, Packet, idx); // motor
-    gpio_bit_reset(GPIOA, GPIO_PIN_1);
     
     AboveRxCnt = 0;
 	memset(AboveRxData, 0, sizeof(AboveRxData));
