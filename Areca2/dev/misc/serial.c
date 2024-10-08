@@ -63,12 +63,12 @@ void com_init(uint32_t com, uint32_t baudrate)
     if(COM4== com){        
         rcu_periph_clock_enable(RCU_GPIOC);
 //        rcu_periph_clock_enable(RCU_GPIOD);
-        rcu_periph_clock_enable(RCU_AF);
     }
     else {
         rcu_periph_clock_enable(COM_GPIO_CLK[com_id]);
     }
-    
+//    rcu_periph_clock_enable(RCU_AF);
+   
     /* enable USART clock */
     rcu_periph_clock_enable(COM_CLK[com_id]);
     if(COM4== com){
@@ -79,17 +79,17 @@ void com_init(uint32_t com, uint32_t baudrate)
 
     /* connect port to USARTx_Rx */
     if(COM4== com){
-        gpio_init(GPIOD, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, COM4_RX_PIN);
+        gpio_init(GPIOD, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, COM4_RX_PIN);
     }
     else {
-        gpio_init(COM_GPIO_PORT[com_id], GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, COM_RX_PIN[com_id]);
+        gpio_init(COM_GPIO_PORT[com_id], GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, COM_RX_PIN[com_id]);
     }
     
     /* USART configure */
     usart_deinit(com);
-    usart_word_length_set(USART0, USART_WL_8BIT);
-    usart_stop_bit_set(USART0, USART_STB_1BIT);
-    usart_parity_config(USART0, USART_PM_NONE);
+//    usart_word_length_set(USART0, USART_WL_8BIT);
+//    usart_stop_bit_set(USART0, USART_STB_1BIT);
+//    usart_parity_config(USART0, USART_PM_NONE);
 
     usart_baudrate_set(com, baudrate);
     usart_receive_config(com, USART_RECEIVE_ENABLE);
@@ -120,19 +120,19 @@ void InitSerilInterrupt(void)
 {
     /* enable USART0 receive, transmit interrupt */
     usart_interrupt_enable(USART0, USART_INT_RBNE);
-    usart_interrupt_enable(USART0, USART_INT_TC);
+//    usart_interrupt_enable(USART0, USART_INT_TC);
     
     /* enable USART1 receive, transmit interrupt */
     usart_interrupt_enable(USART1, USART_INT_RBNE);
-    usart_interrupt_enable(USART1, USART_INT_TC);
+//    usart_interrupt_enable(USART1, USART_INT_TC);
     
     /* enable USART3 receive, transmit interrupt */
     usart_interrupt_enable(UART3, USART_INT_RBNE);
-    usart_interrupt_enable(UART3, USART_INT_TC);
+//    usart_interrupt_enable(UART3, USART_INT_TC);
     
     /* enable USART4 receive, transmit interrupt */
     usart_interrupt_enable(UART4, USART_INT_RBNE);
-    usart_interrupt_enable(UART4, USART_INT_TC);
+//    usart_interrupt_enable(UART4, USART_INT_TC);
 }
 
 
@@ -140,27 +140,31 @@ void uart_write_byte(uint8_t uart_num, const char *src) {
 
     if(uart_num == 0) {
         UART1_TX_Sts = SET;
-        while (usart_flag_get(COM1, USART_FLAG_TC) == SET); 
+//        while (usart_flag_get(COM1, USART_FLAG_TC) == SET); 
         usart_data_transmit(COM1, *src); 
-        while (UART1_TX_Sts == SET); 
+        while (usart_flag_get(COM1, USART_FLAG_TC) == RESET); 
+//        while (UART1_TX_Sts == SET); 
     }
     else if(uart_num == 1) {
         UART2_TX_Sts = SET;
-        while (usart_flag_get(COM2, USART_FLAG_TC) == SET); 
+//        while (usart_flag_get(COM2, USART_FLAG_TC) == SET); 
         usart_data_transmit(COM2, *src); 
-        while (UART2_TX_Sts == SET); 
+        while (usart_flag_get(COM2, USART_FLAG_TC) == RESET); 
+//        while (UART2_TX_Sts == SET); 
     } 
     else if(uart_num == 2) {
         UART3_TX_Sts = SET;
-        while (usart_flag_get(COM3, USART_FLAG_TC) == SET); 
+//        while (usart_flag_get(COM3, USART_FLAG_TC) == SET); 
         usart_data_transmit(COM3, *src); 
-        while (UART3_TX_Sts == SET); 
+        while (usart_flag_get(COM3, USART_FLAG_TC) == RESET); 
+//        while (UART3_TX_Sts == SET); 
     }
     else if(uart_num == 3) {
         UART4_TX_Sts = SET;
-        while (usart_flag_get(COM4, USART_FLAG_TC) == SET); 
+//        while (usart_flag_get(COM4, USART_FLAG_TC) == SET); 
         usart_data_transmit(COM4, *src); 
-        while (UART4_TX_Sts == SET); 
+        while (usart_flag_get(COM4, USART_FLAG_TC) == RESET); 
+//        while (UART4_TX_Sts == SET); 
     }
 }
 

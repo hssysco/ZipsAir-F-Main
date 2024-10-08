@@ -498,8 +498,6 @@ void FocedOffMode(void)
 	
 	pCommInfo->Sync++;
 	pCommInfo->SyncWired++;
-
-	return;	
 }
 
 
@@ -1223,7 +1221,7 @@ int ShowFauInfo(int argc, char **argv)
 		return -1;
 	}
 
-	printf("# Fau above's SW version(%d) \r\n", pRxData->Ver);
+	printf("# Fau above's SW version(%c: %d) \r\n", pRxData->VerH, pRxData->VerL);
 	printf("# Fau mode(%d : %d) level(%d : %d) pmLevel(%d)\r\n", pTxData->Mode, pRxData->Mode, pTxData->FanLevel, pRxData->FanLevel, pSensorInfo->pm_level);
 	printf("# Fau VSPOffset(%d : %d) vsp(%02d:%02d:%02d:%02d:%02d) pps(%4d)\r\n", pTxData->VSPOffset, pRxData->VSPOffset, pRxData->VSP[0], pRxData->VSP[1], pRxData->VSP[2], pRxData->VSP[3], pRxData->VSP[4], pRxData->PPS);
 	printf("# Fau RPM %d:%d:%d:%d:%d\n", pTxData->RPM[0], pTxData->RPM[1], pTxData->RPM[2], pTxData->RPM[3], pTxData->RPM[4]);
@@ -1274,12 +1272,9 @@ void ResrvTimerFunction(void *pArg)
 			else 
 			{
 				pSystemInfo->ResvTime = (pSystemInfo->ResvTimer/3600) + 1;
-			}
-			
+			}			
 		}
 	}
-
-	return;
 }
 
 int EnableFauResvTime(int ResvTime) 

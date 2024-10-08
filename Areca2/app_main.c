@@ -302,7 +302,7 @@ void InitSys (void)
 
 
     
-    //ret = gd_key_state_get(KEY_REV0);
+//    ret = gd_key_state_get(KEY_REV0);
     if(gd_key_state_get(KEY_REV0) == SET)
         SystemInfo.HasSensors = 1;
     else
@@ -600,7 +600,7 @@ void LoadNvsData (void)
 	CommInfo.VSPSet = 0;
 	CommInfo.RPMSet = 0;
 
-	AboveTxInfo.Power = 0;
+//	AboveTxInfo.Power = 0;
 	AboveTxInfo.FanLevel = 0;
 	AboveTxInfo.Mode = OP_MODE_OFF;
 	
@@ -634,9 +634,10 @@ void LoadNvsData (void)
 	AboveTxInfo.Led = 0;
 
 	memset(AboveRxInfo.Serial, 0, MAX_SERIAL_STR_LEN);
-	AboveRxInfo.Ver = -1;
+	AboveRxInfo.VerH = 'A';
+	AboveRxInfo.VerL = 0;
 	
-	AboveRxInfo.Power = 0;
+//	AboveRxInfo.Power = 0;
 	AboveRxInfo.FanLevel = 0;
 	AboveRxInfo.Mode = OP_MODE_OFF;
 	
@@ -1294,7 +1295,7 @@ void app_main()
     
     while(1) {
         gpio_check_task();
-        if(Uart_TxTime >= 200) {
+        if(Uart_TxTime >= 500) {
 //            PIDTask();
 //            AnalysisTask();
             

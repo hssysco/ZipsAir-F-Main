@@ -150,7 +150,7 @@ typedef struct CommInfo
 	
 typedef struct AboveTxInfo
 {
-	unsigned char	Power;
+//	unsigned char	Power;
 	unsigned char	FanLevel;
 	unsigned int	Mode;
 
@@ -170,9 +170,10 @@ typedef struct AboveTxInfo
 typedef struct AboveRxInfo
 {
 	char			Serial[MAX_SERIAL_STR_LEN];
-	int				Ver;
+	uint8_t         VerH;
+	int				VerL;
 
-	unsigned char	Power;
+//	unsigned char	Power;
 	unsigned char	FanLevel;
 	OpModeT			Mode;
 
