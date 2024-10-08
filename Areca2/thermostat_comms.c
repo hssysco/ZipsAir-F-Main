@@ -180,9 +180,10 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 	if(skipStaticData == false)
 	{
 		Packet[idx++] = PACKET_FAU_HEADER;
-		Packet[idx++] = p_CommInfo->SyncWired;
+		Packet[idx++] = p_CommInfo->SyncWired;        
 		Packet[idx++] = ITEM_LEN_NUM_ITEM + ITEM_LEN_SERIAL1 + ITEM_LEN_VERSION;
 		Packet[idx++] = 2;
+        
 		Packet[idx++] = ITEM_SERIAL1;
 		Packet[idx++] = ITEM_LEN_SERIAL1 - 2;
 		if(strlen(p_PersistDataInfo->Serial) != (ITEM_LEN_SERIAL1 - 2))
@@ -201,8 +202,8 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 		}
 		Packet[idx++] = ITEM_SW_VERSION;
 		Packet[idx++] = 0x2 + strlen(p_SystemInfo->Version);
-		Packet[idx++] = 'a';
-		Packet[idx++] = p_RxData->Ver;
+		Packet[idx++] = p_RxData->VerH;
+		Packet[idx++] = p_RxData->VerL;
 		for(i=0; i<strlen(p_SystemInfo->Version); i++)
 		{
 			Packet[idx++] = (p_SystemInfo->Version)[i];
@@ -221,7 +222,7 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 		Packet[idx++] = 7; /* number of items */
 		Packet[idx++] = ITEM_FAN_STATE;
 		Packet[idx++] = 0x4;
-		Packet[idx++] = p_TxData->Power;
+//		Packet[idx++] = p_TxData->Power;
 		if(p_TxData->FanLevel == p_RxData->FanLevel)
 		{
 			Packet[idx++] = p_RxData->FanLevel;
@@ -346,7 +347,7 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 						}
 						else
 						{
-							p_TxData->Power = pItem[2];
+//							p_TxData->Power = pItem[2];
 							p_TxData->FanLevel = pItem[3];
 							p_TxData->Mode = pItem[5];
 						}
