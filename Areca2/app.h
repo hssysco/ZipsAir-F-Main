@@ -202,6 +202,7 @@ typedef struct SensorInfo
 	int smell_iaq;
 	int smell_level;
 	float pressure;
+    float pressure_limit;
 	float gas;
 }SensorInfoT;
 

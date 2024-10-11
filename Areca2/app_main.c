@@ -1295,7 +1295,7 @@ void app_main()
     
     while(1) {
         gpio_check_task();
-        if(Uart_TxTime >= 500) {
+        if(Uart_TxTime >= 200) {
 //            PIDTask();
 //            AnalysisTask();
             

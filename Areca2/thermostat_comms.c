@@ -88,6 +88,8 @@ AboveRxInfoT *pthermoRxData = NULL;
 extern FlagStatus    UART1_TX_Sts;
 extern FlagStatus    UART1_RX_Sts;
 extern uint16_t     Uart_RxTime;
+extern AboveTxInfoT *pAboveTxData;
+extern AboveRxInfoT *pAboveRxData;
 
 
 uint8_t ThermoRxstart = 0;
@@ -105,47 +107,77 @@ extern void delay_1ms(uint32_t count);
 
 static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 {
-	unsigned char packet_size = 0, read_data = 0;
+//	unsigned char packet_size = 0, read_data = 0;
+//	unsigned short checksum = 0, checksumC = 0;
+//
+//	if((pData == NULL) || (pDataLen == NULL))
+//	{
+//		return -1;
+//	}
+//
+//    Uart_RxTime = 0;
+//    while(ThermoRxend == 0) {
+//        if(Uart_RxTime >= 300) {
+//            return -1;
+//        }
+//    }    
+//    packet_size = pData[2];
+//    packet_size += 6;
+//    read_data = pData[2];
+//    read_data += 3;
+//
+//
+//
+//	checksum = CRC16Checksum(pData, read_data);
+//	checksumC = pData[packet_size-2];
+//	checksumC <<= 8;
+//	checksumC = checksumC + pData[packet_size-3];
+//
+//    if(checksum != checksumC) { 
+//        return -1;
+//    }
+//
+//
+//	*pDataLen = ThermoRxCnt;
+//
+//	return 0;
+    unsigned char packet_size = 0, read_data = 0;
 	unsigned short checksum = 0, checksumC = 0;
-
-	if((pData == NULL) || (pDataLen == NULL))
-	{
-		return -1;
-	}
-
-    Uart_RxTime = 0;
-    while(ThermoRxend == 0) {
-        if(Uart_RxTime >= 300) {
-            return -1;
-        }
-    }    
     packet_size = pData[2];
     packet_size += 6;
     read_data = pData[2];
     read_data += 3;
+    
+	if((pData == NULL) || (pDataLen == NULL)) 
+	{
+		return -1;
+	}
 
+    packet_size = *pDataLen;
+    read_data = packet_size -3;
 
-
+        
 	checksum = CRC16Checksum(pData, read_data);
 	checksumC = pData[packet_size-2];
 	checksumC <<= 8;
 	checksumC = checksumC + pData[packet_size-3];
 
     if(checksum != checksumC) { 
+        *pDataLen = 0;
         return -1;
     }
-
 
 	*pDataLen = ThermoRxCnt;
 
 	return 0;
+
 }
 
 static char skipStaticData = false;
-int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
+	char StrBuf[MAX_SERIAL_STR_LEN];
+int CommandToThermostat()
 {
 	int ret = 0, idx = 0;
-	char StrBuf[MAX_SERIAL_STR_LEN];
 	unsigned char NumofItems = 0, revLen = 0, revPktId = 0, i;
 	unsigned int value = 0;
 
@@ -162,10 +194,10 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 	GetCommInfo(&p_CommInfo);
 	GetSensorInfo (&p_SensorInfo);
 
-	if(p_TxData == NULL || p_RxData == NULL || p_PersistDataInfo == NULL || p_SystemInfo == NULL || p_CommInfo == NULL)
-	{
-		return -1;
-	}
+//	if(p_TxData == NULL || p_RxData == NULL || p_PersistDataInfo == NULL || p_SystemInfo == NULL || p_CommInfo == NULL)
+//	{
+//		return -1;
+//	}
 
 	if(p_CommInfo->SyncWired > SYNC_WIRED_ROUND_OFF_VAL)
 	{
@@ -202,8 +234,8 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 		}
 		Packet[idx++] = ITEM_SW_VERSION;
 		Packet[idx++] = 0x2 + strlen(p_SystemInfo->Version);
-		Packet[idx++] = p_RxData->VerH;
-		Packet[idx++] = p_RxData->VerL;
+		Packet[idx++] = pAboveRxData->VerH;
+		Packet[idx++] = pAboveRxData->VerL;
 		for(i=0; i<strlen(p_SystemInfo->Version); i++)
 		{
 			Packet[idx++] = (p_SystemInfo->Version)[i];
@@ -222,43 +254,43 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 		Packet[idx++] = 7; /* number of items */
 		Packet[idx++] = ITEM_FAN_STATE;
 		Packet[idx++] = 0x4;
-//		Packet[idx++] = p_TxData->Power;
-		if(p_TxData->FanLevel == p_RxData->FanLevel)
+//		Packet[idx++] = pAboveRxData->Power;
+		if(pAboveRxData->FanLevel == pAboveRxData->FanLevel)
 		{
-			Packet[idx++] = p_RxData->FanLevel;
+			Packet[idx++] = pAboveRxData->FanLevel;
 		}
 		else
 		{
-			Packet[idx++] = p_TxData->FanLevel;
+			Packet[idx++] = pAboveRxData->FanLevel;
 		}
 		Packet[idx++] = 0;
-		if(p_TxData->Mode == p_RxData->Mode)
+		if(pAboveRxData->Mode == pAboveRxData->Mode)
 		{
-			Packet[idx++] = p_RxData->Mode;
+			Packet[idx++] = pAboveRxData->Mode;
 		}
 		else
 		{
-			Packet[idx++] = p_TxData->Mode;
+			Packet[idx++] = pAboveRxData->Mode;
 		}
 		Packet[idx++] = ITEM_RPM;
 		Packet[idx++] = 0x2;
-		Packet[idx++] = p_RxData->PPS >> 8;
-		Packet[idx++] = p_RxData->PPS & 0xFF;
+		Packet[idx++] = pAboveRxData->PPS >> 8;
+		Packet[idx++] = pAboveRxData->PPS & 0xFF;
 		Packet[idx++] = ITEM_FILTER;
 		Packet[idx++] = 0x5;
-		Packet[idx++] = p_TxData->FltTmrRst;
-		Packet[idx++] = p_RxData->FltTmr >> 8;
-		Packet[idx++] = p_RxData->FltTmr & 0xFF;
-		Packet[idx++] = p_RxData->FltTmrLmt >> 8;
-		Packet[idx++] = p_RxData->FltTmrLmt & 0xFF;
+		Packet[idx++] = pAboveRxData->FltTmrRst;
+		Packet[idx++] = pAboveRxData->FltTmr >> 8;
+		Packet[idx++] = pAboveRxData->FltTmr & 0xFF;
+		Packet[idx++] = pAboveRxData->FltTmrLmt >> 8;
+		Packet[idx++] = pAboveRxData->FltTmrLmt & 0xFF;
 		Packet[idx++] = ITEM_VSP1;
 		Packet[idx++] = 0x6;
-		Packet[idx++] = p_RxData->VSP[0];
-		Packet[idx++] = p_RxData->VSP[1];
-		Packet[idx++] = p_RxData->VSP[2];
-		Packet[idx++] = p_RxData->VSP[3];
-		Packet[idx++] = p_RxData->VSP[4];
-		Packet[idx++] = p_RxData->VSPOffset;
+		Packet[idx++] = pAboveRxData->VSP[0];
+		Packet[idx++] = pAboveRxData->VSP[1];
+		Packet[idx++] = pAboveRxData->VSP[2];
+		Packet[idx++] = pAboveRxData->VSP[3];
+		Packet[idx++] = pAboveRxData->VSP[4];
+		Packet[idx++] = pAboveRxData->VSPOffset;
 		Packet[idx++] = ITEM_RESV_SET;
 		Packet[idx++] = 1;
 		Packet[idx++] = p_SystemInfo->ResvTimeSet;
@@ -270,7 +302,7 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 		Packet[idx++] = p_SystemInfo->ResvTimer & 0xFF;
 		Packet[idx++] = ITEM_ERROR;
 		Packet[idx++] = 0x1;
-		Packet[idx++] = p_RxData->Err;
+		Packet[idx++] = pAboveRxData->Err;
 		chksum = CRC16Checksum(Packet, idx);
 		Packet[idx++] = chksum&0xFF;
 		Packet[idx++] = (chksum>>8)&0xFF;
@@ -284,19 +316,25 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
     delay_1ms(1);
     gpio_bit_reset(GPIOB, GPIO_PIN_4);
 
-    ThermoRxCnt = 0;
-	memset(ThermoRxData, 0, sizeof(ThermoRxData));
     
+    if(ThermoRxend == 0) {
+        ThermoRxend = 0;
+        ThermoRxstart = 0;
+        ThermoRxCnt = 0;
+        memset(ThermoRxData, 0, sizeof(ThermoRxData));
+        return -1;
+    }
     Uart_RxTime = 0;
     ThermoRxend = 0;
-    while(ThermoRxend == 0) {
-        if(Uart_RxTime > 200) return -1;
-    }
+//    while(ThermoRxend == 0) {
+//        if(Uart_RxTime > 200) return -1;
+//    }
     
     ThermoRxend = 0;
     ThermoRxstart = 0;
     memcpy(pthermoRxData->Serial, ThermoRxData, ThermoRxCnt);
     
+    revLen = ThermoRxCnt;
 	ret = ReceiveData(ThermoRxData, &revLen);
 	if(ret == 0 && revLen > 0)
 	{
@@ -332,50 +370,57 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 						StrBuf[j] = pItem[2 + j];
 					}
 
-					if(strncmp(StrBuf, p_PersistDataInfo->Serial, MAX_SERIAL_STR_LEN) == 0)
-					{
+//					if(strncmp(StrBuf, p_PersistDataInfo->Serial, MAX_SERIAL_STR_LEN) == 0)
+//					{
 						skipStaticData = true;
-					}
+//					}
 					break;
 				case ITEM_FAN_STATE:
-					if(skipStaticData && revPktId > p_CommInfo->SyncWired)
-					{
-						if(p_RxData->Err & OPENED_COVER_ERR)
+//					if(skipStaticData && revPktId > p_CommInfo->SyncWired)
+//					{
+						if(pAboveRxData->Err & OPENED_COVER_ERR)
 						{
-							if(p_TxData->Mode != OP_MODE_OFF)
+							if(pAboveTxData->Mode != OP_MODE_OFF)
 								FocedOffMode();
 						}
 						else
 						{
-//							p_TxData->Power = pItem[2];
-							p_TxData->FanLevel = pItem[3];
-							p_TxData->Mode = pItem[5];
+//							pAboveTxData->Power = pItem[2];
+							pAboveTxData->FanLevel = pItem[3];
+							pAboveTxData->Mode = pItem[4];
 						}
-					}
+//					}
 					break;
+				case ITEM_RPM:
+                    pAboveTxData->RPMSet = pItem[2]<<8;   
+                    pAboveTxData->RPMSet |= pItem[3]; 
+					break;
+                    
 				case ITEM_FILTER:
-					if(revPktId > p_CommInfo->SyncWired)
-					{
-						p_TxData->FltTmrRst = pItem[2];
-						value = (pItem[5] << 8 | pItem[6]);
-						if(value && p_PersistDataInfo->fltdifprslmt != value && value <= MAX_FILTER_USE_TIME)
-						{
-							p_TxData->FltTmrLmt = value;
-							p_PersistDataInfo->fltdifprslmt = p_TxData->FltTmrLmt;
-							SetValueU32(PROP_NAME_SYS_FAU_FLTPRSLMT, p_PersistDataInfo->fltdifprslmt);
-						}
-					}
+//					if(revPktId > p_CommInfo->SyncWired)
+//					{
+						pAboveTxData->FltTmrRst = pItem[2];
+						value = (pItem[3] << 8 | pItem[4]);
+                        pAboveTxData->FltTmr = value;
+                        value = (pItem[5] << 8 | pItem[6]);
+//						if(value && p_PersistDataInfo->fltdifprslmt != value && value <= MAX_FILTER_USE_TIME)
+//						{
+							pAboveTxData->FltTmrLmt = value;
+//							p_PersistDataInfo->fltdifprslmt = pAboveTxData->FltTmrLmt;
+//							SetValueU32(PROP_NAME_SYS_FAU_FLTPRSLMT, p_PersistDataInfo->fltdifprslmt);
+//						}
+//					}
 					break;
 				case ITEM_VSP1:
-					p_TxData->VSP[0] = pItem[2];
-					p_TxData->VSP[1] = pItem[3];
-					p_TxData->VSP[2] = pItem[4];
-					p_TxData->VSP[3] = pItem[5];
-					p_TxData->VSP[4] = pItem[6];
-					p_TxData->VSPOffset = pItem[7];
+					pAboveTxData->VSP[0] = pItem[2];
+					pAboveTxData->VSP[1] = pItem[3];
+					pAboveTxData->VSP[2] = pItem[4];
+					pAboveTxData->VSP[3] = pItem[5];
+					pAboveTxData->VSP[4] = pItem[6];
+					pAboveTxData->VSPOffset = pItem[7];
 					break;
 				case ITEM_LED_STATUS:
-					p_TxData->Led = pItem[2] << 8 | pItem[3];
+					pAboveTxData->Led = pItem[2] << 8 | pItem[3];
 					break;
 				case ITEM_SENSOR_TEMP:
 					p_SensorInfo->temp = (pItem[2] << 8 | pItem[3]) / 10;
@@ -404,46 +449,52 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 				case ITEM_SENSOR_GAS:
 					p_SensorInfo->gas = (pItem[2] << 8 | pItem[3]) / 10;
 					break;
-				case ITEM_SENSOR_PRESSURE:
-					p_SensorInfo->pressure = (pItem[2] << 8 | pItem[3]) / 10;
+				case ITEM_DIFF_PRESSURE:
+					p_SensorInfo->pressure = pItem[2];
+                    p_SensorInfo->pressure_limit = pItem[3];                    
 					break;
-				case ITEM_RESV_TIMER:
-					if(revPktId > p_CommInfo->SyncWired)
-					{
-						value = pItem[2] << 24 | pItem[3] << 16 | pItem[4] << 8 | pItem[5];
-						if(value > 0)
-						{
-							if(p_SystemInfo->ResvStatus)
-							{
-								p_SystemInfo->ResvTimer = value;
-								printf("resv uptadte, timer : %d\n", p_SystemInfo->ResvTimer);
-							}
-							else
-							{
-								p_SystemInfo->ResvTimer = value;
-								p_SystemInfo->ResvTime = (p_SystemInfo->ResvTimer/3600) + 1;
-								EnableFauResvTime(p_SystemInfo->ResvTime);
-								p_SystemInfo->ResvTimer = value;
-								p_SystemInfo->ResvStatus = 1;
-								printf("resv on, timer : %d\n", p_SystemInfo->ResvTimer);
-							}
-						}
-						else
-						{
-							if(p_SystemInfo->ResvStatus)
-							{
-								DisableFauResvTime(p_SystemInfo->ResvTimerInstance);
-								p_SystemInfo->ResvTime = 0;
-								p_SystemInfo->ResvTimer = 0;
-								p_SystemInfo->ResvTimerInstance = -1;
-								p_SystemInfo->ResvStatus = 0;
-								printf("resv off\n");
-							}
-						}
+				case ITEM_TIMER:
+//					if(revPktId > p_CommInfo->SyncWired)
+//					{
+//						value = pItem[2] << 24 | pItem[3] << 16 | pItem[4] << 8 | pItem[5];
+                        value = pItem[2] << 8 | pItem[3];
+                        p_SystemInfo->ResvTimer = value;
+//						if(value > 0)
+//						{
+//							if(p_SystemInfo->ResvStatus)
+//							{
+//								p_SystemInfo->ResvTimer = value;
+//								printf("resv uptadte, timer : %d\n", p_SystemInfo->ResvTimer);
+//							}
+//							else
+//							{
+//								p_SystemInfo->ResvTimer = value;
+//								p_SystemInfo->ResvTime = (p_SystemInfo->ResvTimer/3600) + 1;
+//								EnableFauResvTime(p_SystemInfo->ResvTime);
+//								p_SystemInfo->ResvTimer = value;
+//								p_SystemInfo->ResvStatus = 1;
+//								printf("resv on, timer : %d\n", p_SystemInfo->ResvTimer);
+//							}
+//						}
+//						else
+//						{
+//							if(p_SystemInfo->ResvStatus)
+//							{
+//								DisableFauResvTime(p_SystemInfo->ResvTimerInstance);
+//								p_SystemInfo->ResvTime = 0;
+//								p_SystemInfo->ResvTimer = 0;
+//								p_SystemInfo->ResvTimerInstance = -1;
+//								p_SystemInfo->ResvStatus = 0;
+//								printf("resv off\n");
+//							}
+//						}
 						/* Only last sync item should update current sync for traverse upper item */
 						p_CommInfo->SyncWired = revPktId;
-					}
+//					}
 					break;
+                case ITEM_ERROR:
+ 					break;
+                   
 			}
 			pItem = pItem + (pItem[1]+2);
 		}
@@ -458,14 +509,15 @@ int CommandToThermostat( AboveTxInfoT *p_TxData,  AboveRxInfoT *p_RxData )
 		}
 		skipStaticData = false;
 	}
-
+    
+    memset(ThermoRxData, 0, sizeof(ThermoRxData));
 	return ret;
 }
 
 ///------------------------------------------------------
 void ThermostatCommTask()
 {
-    CommandToThermostat(pthermoTxData, pthermoRxData);
+    CommandToThermostat();
 }
 
 void InitThermostatComms(void)
