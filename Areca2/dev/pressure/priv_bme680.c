@@ -299,7 +299,7 @@ int8_t bme680_init(struct bme680_dev *dev)
 		rslt = bme680_soft_reset(dev);
 		if (rslt == BME680_OK) {
 			rslt = bme680_get_regs(BME680_CHIP_ID_ADDR, &dev->chip_id, 1, dev);
-			printf("### bme680_init :: bme680_get_regs (%d)(%x) !!! \r\n",rslt, dev->chip_id);
+			//printf("### bme680_init :: bme680_get_regs (%d)(%x) !!! \r\n",rslt, dev->chip_id);
 			if (rslt == BME680_OK) {
 				if (dev->chip_id == BME680_CHIP_ID) {
 					/* Get the Calibration data */
@@ -397,7 +397,7 @@ int8_t bme680_soft_reset(struct bme680_dev *dev)
 		/* Reset the device */
 		if (rslt == BME680_OK) {
 			rslt = bme680_set_regs(&reg_addr, &soft_rst_cmd, 1, dev);
-			printf("### bme680_soft_reset :: bme680_set_regs (%d) !!! \r\n",rslt);
+			//printf("### bme680_soft_reset :: bme680_set_regs (%d) !!! \r\n",rslt);
 			/* Wait for 5ms */
 			dev->delay_ms(BME680_RESET_PERIOD);
 			if (rslt == BME680_OK) {
@@ -1315,7 +1315,7 @@ static int8_t get_mem_page(struct bme680_dev *dev)
 	rslt = null_ptr_check(dev);
 	if (rslt == BME680_OK) {
 		dev->com_rslt = dev->read(dev->dev_id, BME680_MEM_PAGE_ADDR | BME680_SPI_RD_MSK, &reg, 1);
-		printf("== get_mem_page :: read (%x)(%d) \r\n",reg, dev->com_rslt);
+		//printf("== get_mem_page :: read (%x)(%d) \r\n",reg, dev->com_rslt);
 		if (dev->com_rslt != 0)
 			rslt = BME680_E_COM_FAIL;
 		else

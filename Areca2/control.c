@@ -2,13 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-//#include <nvs_flash.h>
-//#include <driver/uart.h>
-//#include <soc/uart_struct.h>
-#include "argtable3.h"
-
-
 #include "app.h"
 
 #define	GOOD				1
@@ -688,7 +681,7 @@ void AnalysisTask()
 			}
 			else
 			{
-				printf("Unrecoginized mode %d\n", FauMode);
+				//printf("Unrecoginized mode %d\n", FauMode);
 			}
 		}
 		else
@@ -1027,7 +1020,7 @@ void RmtCallback(RemoteEventT *pEvt)
 	GetCommInfo (&pCommInfo);
 	GetSystemInfo (&pSystemInfo);
 
-	printf("## RmtCallback ( %d: %d: %d: %d: %d ) !!! \r\n", pEvt->Mode, pEvt->FanLevel, pEvt->ResetFlt, pEvt->ResvOn, pEvt->ResvTime); 
+	//printf("## RmtCallback ( %d: %d: %d: %d: %d ) !!! \r\n", pEvt->Mode, pEvt->FanLevel, pEvt->ResetFlt, pEvt->ResvOn, pEvt->ResvTime); 
 	
 	if(pEvt->Mode == 0)
 	{
@@ -1089,7 +1082,7 @@ void RmtCallback(RemoteEventT *pEvt)
 			pSystemInfo->ResvStatus = 1;
 			pCommInfo->Sync++;
 			pCommInfo->SyncWired++;
-			printf("resv on, time : %d \r\n", pSystemInfo->ResvTime);
+			//printf("resv on, time : %d \r\n", pSystemInfo->ResvTime);
 		}
 		else if(pSystemInfo->ResvStatus && pEvt->ResvTime != pSystemInfo->ResvTime)
 		{
@@ -1097,7 +1090,7 @@ void RmtCallback(RemoteEventT *pEvt)
 			pSystemInfo->ResvTimeSet = 1;
 			pCommInfo->Sync++;
 			pCommInfo->SyncWired++;
-			printf("resv uptadte, time : %d \r\n", pSystemInfo->ResvTime);
+			//printf("resv uptadte, time : %d \r\n", pSystemInfo->ResvTime);
 		}
 	}
 	else
@@ -1112,7 +1105,7 @@ void RmtCallback(RemoteEventT *pEvt)
 			pSystemInfo->ResvStatus = 0;
 			pCommInfo->Sync++;
 			pCommInfo->SyncWired++;
-			printf("resv off\n");
+			//printf("resv off\n");
 		}
 	}
 
@@ -1180,7 +1173,7 @@ void PIDTask()
 
     if ((FanLevel != OldFanLevel) || (Rpm != OldRpm))
     {
-        printf("### Rpm (%d:%d) \r\n", Rpm, OldRpm);
+        //printf("### Rpm (%d:%d) \r\n", Rpm, OldRpm);
     
         OldFanLevel = FanLevel;			
         OldRpm = Rpm;
@@ -1221,12 +1214,12 @@ int ShowFauInfo(int argc, char **argv)
 		return -1;
 	}
 
-	printf("# Fau above's SW version(%c: %d) \r\n", pRxData->VerH, pRxData->VerL);
-	printf("# Fau mode(%d : %d) level(%d : %d) pmLevel(%d)\r\n", pTxData->Mode, pRxData->Mode, pTxData->FanLevel, pRxData->FanLevel, pSensorInfo->pm_level);
-	printf("# Fau VSPOffset(%d : %d) vsp(%02d:%02d:%02d:%02d:%02d) pps(%4d)\r\n", pTxData->VSPOffset, pRxData->VSPOffset, pRxData->VSP[0], pRxData->VSP[1], pRxData->VSP[2], pRxData->VSP[3], pRxData->VSP[4], pRxData->PPS);
-	printf("# Fau RPM %d:%d:%d:%d:%d\n", pTxData->RPM[0], pTxData->RPM[1], pTxData->RPM[2], pTxData->RPM[3], pTxData->RPM[4]);
-	printf("# Fau flttmr(%04d) flttmrlmt(%04d) \r\n", pTxData->FltTmr, pTxData->FltTmrLmt);
-	printf("# Fau Err(0x%x) \r\n", pRxData->Err);
+	//printf("# Fau above's SW version(%c: %d) \r\n", pRxData->VerH, pRxData->VerL);
+	//printf("# Fau mode(%d : %d) level(%d : %d) pmLevel(%d)\r\n", pTxData->Mode, pRxData->Mode, pTxData->FanLevel, pRxData->FanLevel, pSensorInfo->pm_level);
+	//printf("# Fau VSPOffset(%d : %d) vsp(%02d:%02d:%02d:%02d:%02d) pps(%4d)\r\n", pTxData->VSPOffset, pRxData->VSPOffset, pRxData->VSP[0], pRxData->VSP[1], pRxData->VSP[2], pRxData->VSP[3], pRxData->VSP[4], pRxData->PPS);
+	//printf("# Fau RPM %d:%d:%d:%d:%d\n", pTxData->RPM[0], pTxData->RPM[1], pTxData->RPM[2], pTxData->RPM[3], pTxData->RPM[4]);
+	//printf("# Fau flttmr(%04d) flttmrlmt(%04d) \r\n", pTxData->FltTmr, pTxData->FltTmrLmt);
+	//printf("# Fau Err(0x%x) \r\n", pRxData->Err);
 
 	return 0;
 }
@@ -1261,7 +1254,7 @@ void ResrvTimerFunction(void *pArg)
 		if (pSystemInfo->ResvTimer > 0) 
 		{
 			pSystemInfo->ResvTimer--;
-			printf("Timer %d\n", pSystemInfo->ResvTimer);
+			//printf("Timer %d\n", pSystemInfo->ResvTimer);
 			if (pSystemInfo->ResvTimer <= 0) 
 			{
 				pSystemInfo->ResvTime = pSystemInfo->ResvTimer = 0;
@@ -1285,7 +1278,7 @@ int EnableFauResvTime(int ResvTime)
 
 	if(( pSystemInfo == NULL) || ( ResvTime  >= 13 ))
 	{
-		printf("Failed to enable Reservetimer\n");
+		//printf("Failed to enable Reservetimer\n");
 		return -1;
 	}
 
@@ -1295,7 +1288,7 @@ int EnableFauResvTime(int ResvTime)
 	if(pSystemInfo->ResvTimerInstance == -1)
 	{
 //		pSystemInfo->ResvTimerInstance = CreateTimer("FAUTimer", 1, 1000000, &ResrvTimerFunction);
-		printf("Creater timer instance %d\n", pSystemInfo->ResvTimerInstance);
+		//printf("Creater timer instance %d\n", pSystemInfo->ResvTimerInstance);
 	}
 
 	return 0;
@@ -1312,18 +1305,18 @@ void DisableFauResvTime(     int instance)
 int MakeReservation(int argc, char **argv) 
 {
 	int result = 0;
-    int nerrors = arg_parse(argc, argv, (void **) &CmdArgs);
-	
-    if (nerrors != 0) 
-	{
-        arg_print_errors(stderr, CmdArgs.pEnd, argv[0]);
-        return -1;
-    }
-
-	if((CmdArgs.pRevHour->ival[0] < 1 )|| (CmdArgs.pRevHour->ival[0] > 12 )) 
-	{
-		return -2;
-	}
+//    int nerrors = arg_parse(argc, argv, (void **) &CmdArgs);
+//	
+//    if (nerrors != 0) 
+//	{
+//        arg_print_errors(stderr, CmdArgs.pEnd, argv[0]);
+//        return -1;
+//    }
+//
+//	if((CmdArgs.pRevHour->ival[0] < 1 )|| (CmdArgs.pRevHour->ival[0] > 12 )) 
+//	{
+//		return -2;
+//	}
 
 //	RevTimerInstance = EnableFauResvTime(CmdArgs.pRevHour->ival[0]);
 
@@ -1333,8 +1326,8 @@ int MakeReservation(int argc, char **argv)
 
 void Register_Reservation (void) 
 {
-	CmdArgs.pRevHour = arg_int0(NULL, "time", "<1~12>", "reservation time( 1hour ~ 12 hour )");
-    CmdArgs.pEnd = arg_end(1);
+//	CmdArgs.pRevHour = arg_int0(NULL, "time", "<1~12>", "reservation time( 1hour ~ 12 hour )");
+//    CmdArgs.pEnd = arg_end(1);
 	
 //    const esp_console_cmd_t CmdRev = {
 //        .command = "mkrev",
@@ -1351,73 +1344,73 @@ void Register_Reservation (void)
 static int CommandFau(int argc, char **argv) 
 {
 	int result = 0;
-	CtrlModeTypeT data = CTRL_MODE_OFF;
-    uint8_t CtrlFanData = 0;
-
-    int nerrors = arg_parse(argc, argv, (void **) &FauCmd);
-    if (nerrors != 0) 
-	{
-        arg_print_errors(stderr, FauCmd.end, argv[0]);
-        return 1;
-    }
-
-	if(FauCmd.command->ival[0] == 0) 
-	{
-		switch(FauCmd.step->ival[0])
-		{
-			case 0:
-			default:
-				data = CTRL_MODE_OFF;
-			break;
-			case 1:
-				data = CTRL_MODE_AUTO;
-			break;
-			case 2:
-				data = CTRL_MODE_MANUAL;
-			break;
-			case 3:
-				data = CTRL_MODE_SLEEP;
-			break;
-		}
-	
-		CtrlMode(data);
-		
-	}
-	else if(FauCmd.command->ival[0] == 1) 
-	{
-		switch(FauCmd.step->ival[0])
-		{
-			case 0:
-				CtrlFanData = 0;
-			break;
-			case 2:
-				CtrlFanData = 2;
-			break;
-			case 3:
-				CtrlFanData = 3;
-			break;
-			case 4:
-				CtrlFanData = 4;
-			break;
-			case 5:
-				CtrlFanData = 5;
-			break;
-			default:
-				CtrlFanData = 2;
-			break;
-		}
-	
-		CtrlFan(CtrlFanData);
-	}
+//	CtrlModeTypeT data = CTRL_MODE_OFF;
+//    uint8_t CtrlFanData = 0;
+//
+//    int nerrors = arg_parse(argc, argv, (void **) &FauCmd);
+//    if (nerrors != 0) 
+//	{
+//        arg_print_errors(stderr, FauCmd.end, argv[0]);
+//        return 1;
+//    }
+//
+//	if(FauCmd.command->ival[0] == 0) 
+//	{
+//		switch(FauCmd.step->ival[0])
+//		{
+//			case 0:
+//			default:
+//				data = CTRL_MODE_OFF;
+//			break;
+//			case 1:
+//				data = CTRL_MODE_AUTO;
+//			break;
+//			case 2:
+//				data = CTRL_MODE_MANUAL;
+//			break;
+//			case 3:
+//				data = CTRL_MODE_SLEEP;
+//			break;
+//		}
+//	
+//		CtrlMode(data);
+//		
+//	}
+//	else if(FauCmd.command->ival[0] == 1) 
+//	{
+//		switch(FauCmd.step->ival[0])
+//		{
+//			case 0:
+//				CtrlFanData = 0;
+//			break;
+//			case 2:
+//				CtrlFanData = 2;
+//			break;
+//			case 3:
+//				CtrlFanData = 3;
+//			break;
+//			case 4:
+//				CtrlFanData = 4;
+//			break;
+//			case 5:
+//				CtrlFanData = 5;
+//			break;
+//			default:
+//				CtrlFanData = 2;
+//			break;
+//		}
+//	
+//		CtrlFan(CtrlFanData);
+//	}
 
     return result;
 }
 
 void Register_CtrlFau (void) 
 {
-	FauCmd.command = arg_int0(NULL, "com", "<0|1>", "fau's com( 0: mode, 1: fan level)");
-	FauCmd.step = arg_int1(NULL, "num", "< 0 ~ 3, 2 ~ 5 >", "fau mode (0,1,2,3), fan level (2,3,4,5)");
-	FauCmd.end = arg_end(2);
+//	FauCmd.command = arg_int0(NULL, "com", "<0|1>", "fau's com( 0: mode, 1: fan level)");
+//	FauCmd.step = arg_int1(NULL, "num", "< 0 ~ 3, 2 ~ 5 >", "fau mode (0,1,2,3), fan level (2,3,4,5)");
+//	FauCmd.end = arg_end(2);
 	
 //	const esp_console_cmd_t cmd_fau = 
 //	{

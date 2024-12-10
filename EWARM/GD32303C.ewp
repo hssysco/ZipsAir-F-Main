@@ -652,15 +652,15 @@
                 <option>
                     <name>OOCOutputFormat</name>
                     <version>3</version>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>GD32303C_EVAL.srec</state>
+                    <state>GD32303C.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -668,7 +668,7 @@
                 </option>
                 <option>
                     <name>OOCObjCopyEnable</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -779,7 +779,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$TOOLKIT_DIR$\config\linker\GD\GD32F303xE.icf</state>
+                    <state>$TOOLKIT_DIR$\config\linker\GD\GD32F303xC.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -2106,7 +2106,7 @@
         </file>
     </group>
     <group>
-        <name>Areca2</name>
+        <name>Areca</name>
         <group>
             <name>dev</name>
             <group>
@@ -2149,9 +2149,6 @@
             </group>
             <group>
                 <name>misc</name>
-                <file>
-                    <name>$PROJ_DIR$\..\Areca2\dev\misc\audio.c</name>
-                </file>
                 <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\gpio_dev.c</name>
                 </file>
@@ -2197,9 +2194,6 @@
             <name>$PROJ_DIR$\..\Areca2\app_main.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Areca2\cli.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Areca2\control.c</name>
         </file>
         <file>
@@ -2222,197 +2216,16 @@
             </excluded>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Areca2\pid.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Areca2\sntp.c</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Areca2\thermostat_comms.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Areca2\timer.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Areca2\update.c</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Areca2\wifi_comms.c</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-        </file>
-    </group>
-    <group>
-        <name>argtable3</name>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_cmd.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_date.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_dbl.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_dstr.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_end.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_file.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_hashtable.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_int.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_lit.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_rem.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_rex.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_str.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\arg_utils.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\components\console\argtable3\argtable3.c</name>
         </file>
     </group>
     <group>
         <name>CMSIS</name>
         <file>
             <name>$PROJ_DIR$\..\GD32F30x_Firmware_Library\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</name>
-        </file>
-    </group>
-    <group>
-        <name>Doc</name>
-        <file>
-            <name>$PROJ_DIR$\..\readme.txt</name>
-        </file>
-    </group>
-    <group>
-        <name>ESP32_components</name>
-        <group>
-            <name>console</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-            <file>
-                <name>$PROJ_DIR$\..\components\console\commands.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\console\esp_console_common.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\console\esp_console_repl_chip.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\console\esp_console_repl_linux.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\console\split_argv.c</name>
-            </file>
-        </group>
-        <group>
-            <name>esp_common</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_common\src\esp_err_check_linux.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_common\src\esp_err_to_name.c</name>
-            </file>
-        </group>
-        <group>
-            <name>esp_timer</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\esp_timer.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\esp_timer_etm.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\esp_timer_impl_common.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\esp_timer_impl_lac.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\esp_timer_impl_systimer.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\esp_timer_init.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\ets_timer_legacy.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\esp_timer\src\system_time.c</name>
-            </file>
-        </group>
-        <group>
-            <name>heap</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\heap_caps.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\heap_caps_base.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\heap_caps_init.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\heap_caps_linux.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\heap_task_info.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\heap_trace_standalone.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\multi_heap.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\components\heap\multi_heap_poisoning.c</name>
-            </file>
-        </group>
-    </group>
-    <group>
-        <name>GD32F30x_EVAL</name>
-        <file>
-            <name>$PROJ_DIR$\..\Utilities\gd32f303c_eval.c</name>
         </file>
     </group>
     <group>

@@ -173,8 +173,9 @@ typedef struct AboveRxInfo
 	uint8_t         VerH;
 	int				VerL;
 
-//	unsigned char	Power;
+	unsigned char	Power;
 	unsigned char	FanLevel;
+	unsigned char	ErvLevel;
 	OpModeT			Mode;
 
 	unsigned char	FltTmrRst;

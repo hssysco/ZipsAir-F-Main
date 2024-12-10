@@ -142,9 +142,9 @@ void PrintBlob(const char *pBlob, size_t Len)
 {
 	for (int i = 0; i < Len; i++) 
 	{
-		printf("%02x", pBlob[i]);
+		//printf("%02x", pBlob[i]);
 	}
-	printf("\n");
+	//printf("\n");
 }
 //int16_t SetValue(const char *pKey, const char *pStrType, const char *pStrValue);
 
@@ -422,7 +422,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 //		Err = nvs_get_i8(Nvs, pKey, &Value);
 		if (Err == ESP_OK) 
 		{
-			printf("Value associated with key '%s' is %d \n", pKey, Value);
+			//printf("Value associated with key '%s' is %d \n", pKey, Value);
 		}
 	} 
 	else if (Type == NVS_TYPE_U8) 
@@ -431,7 +431,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 //		Err = nvs_get_u8(Nvs, pKey, &Value);
 		if (Err == ESP_OK) 
 		{
-			printf("Value associated with key '%s' is %u \n", pKey, Value);
+			//printf("Value associated with key '%s' is %u \n", pKey, Value);
 		}
 	} 
 	else if (Type == NVS_TYPE_I16) 
@@ -440,7 +440,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 //		Err = nvs_get_i16(Nvs, pKey, &Value);
 		if (Err == ESP_OK) 
 		{
-			printf("Value associated with key '%s' is %d \n", pKey, Value);
+			//printf("Value associated with key '%s' is %d \n", pKey, Value);
 		}
 	} 
 	else if (Type == NVS_TYPE_U16) 
@@ -448,7 +448,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 		uint16_t Value;
 //		if ((Err = nvs_get_u16(Nvs, pKey, &Value)) == ESP_OK) 
 //		{
-//			printf("Value associated with key '%s' is %u", pKey, Value);
+//			//printf("Value associated with key '%s' is %u", pKey, Value);
 //		}
 	} 
 	else if (Type == NVS_TYPE_I32) 
@@ -456,7 +456,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 		int32_t Value;
 //		if ((Err = nvs_get_i32(Nvs, pKey, &Value)) == ESP_OK) 
 //		{
-//			printf("Value associated with key '%s' is %d \n", pKey, Value);
+//			//printf("Value associated with key '%s' is %d \n", pKey, Value);
 //		}
 	} 
 	else if (Type == NVS_TYPE_U32) 
@@ -464,7 +464,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 		uint32_t Value;
 //		if ((Err = nvs_get_u32(Nvs, pKey, &Value)) == ESP_OK) 
 //		{
-//			printf("Value associated with key '%s' is %u \n", pKey, Value);
+//			//printf("Value associated with key '%s' is %u \n", pKey, Value);
 //		}
 	} 
 	else if (Type == NVS_TYPE_I64) 
@@ -472,7 +472,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 		int64_t Value;
 //		if ((Err = nvs_get_i64(Nvs, pKey, &Value)) == ESP_OK) 
 //		{
-//			printf("Value associated with key '%s' is %lld \n", pKey, Value);
+//			//printf("Value associated with key '%s' is %lld \n", pKey, Value);
 //		}
 	} 
 	else if (Type == NVS_TYPE_U64) 
@@ -480,7 +480,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 		uint64_t Value;
 //		if ( (Err = nvs_get_u64(Nvs, pKey, &Value)) == ESP_OK) 
 //		{
-//			printf("Value associated with key '%s' is %llu \n", pKey, Value);
+//			//printf("Value associated with key '%s' is %llu \n", pKey, Value);
 //		}
 	} 
 	else if (Type == NVS_TYPE_STR) 
@@ -491,7 +491,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 //			char *pStr = (char *)malloc(Len);
 //			if ( (Err = nvs_get_str(Nvs, pKey, pStr, &Len)) == ESP_OK) 
 //			{
-//				printf("String associated with key '%s' is %s \n", pKey, pStr);
+//				//printf("String associated with key '%s' is %s \n", pKey, pStr);
 //			}
 //			free(pStr);
 //		}
@@ -504,7 +504,7 @@ int16_t GetValue(const char *pKey, const char *pStrType)
 //			char *pBlob = (char *)malloc(Len);
 //			if ( (Err = nvs_get_blob(Nvs, pKey, pBlob, &Len)) == ESP_OK) 
 //			{
-//				printf("Blob associated with key '%s' is %d bytes long: \n", pKey, Len);
+//				//printf("Blob associated with key '%s' is %d bytes long: \n", pKey, Len);
 //				PrintBlob(pBlob, Len);
 //			}
 //			free(pBlob);
@@ -586,7 +586,7 @@ int16_t GetValueU8(const char *pKey, unsigned char *pData)
 
 //	Err = nvs_get_u8(Nvs, pKey, &Value);
 //	if (Err == ESP_OK) {
-//		printf("Value associated with key '%s' is %u \n", pKey, Value);
+//		//printf("Value associated with key '%s' is %u \n", pKey, Value);
 //		*pData = Value;
 //	}
 //
@@ -611,7 +611,7 @@ int16_t GetValueU32(const char *pKey, unsigned int *pData)
 //
 //	Err = nvs_get_u32(Nvs, pKey, &Value);
 //	if (Err == ESP_OK) {
-//		printf("Value associated with key '%s' is %u \n", pKey, Value);
+//		//printf("Value associated with key '%s' is %u \n", pKey, Value);
 //		*pData = Value;
 //	}
 //
@@ -640,7 +640,7 @@ int16_t GetValueStr(const char *pKey, char *pData)
 //	{
 //		char *pStr = (char *)malloc(Len);
 //		if ( (Err = nvs_get_str(Nvs, pKey, pStr, &Len)) == ESP_OK) {
-//			printf("String associated with key '%s' is %s \n", pKey, pStr);
+//			//printf("String associated with key '%s' is %s \n", pKey, pStr);
 //			strncpy(pData, pStr, Len);
 //		}
 //

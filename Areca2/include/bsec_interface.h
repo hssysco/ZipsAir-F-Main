@@ -150,7 +150,7 @@
     // Example // 
     bsec_version_t  version;
     bsec_get_version(&version);
-    printf("BSEC version: %d.%d.%d.%d",version.major, version.minor, version.major_bugfix, version.minor_bugfix);
+    //printf("BSEC version: %d.%d.%d.%d",version.major, version.minor, version.major_bugfix, version.minor_bugfix);
  
   \endcode
 */

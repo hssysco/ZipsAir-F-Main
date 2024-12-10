@@ -83,14 +83,14 @@ void Pm2008Task(void* arg)
 					param.pm_1_0 = (df[12]<<24) | (df[13]<<16) | (df[14]<<8) | df[15];
 					param.pm_2_5 = (df[16]<<24) | (df[17]<<16) | (df[18]<<8) | df[19];
 					param.pm_10_0 = (df[20]<<24) | (df[21]<<16) | (df[22]<<8) | df[23];
-					printf("Pm2008Task: 2 (%ld: %ld: %ld) \r\n", param.pm_1_0, param.pm_2_5, param.pm_10_0);
+					//printf("Pm2008Task: 2 (%ld: %ld: %ld) \r\n", param.pm_1_0, param.pm_2_5, param.pm_10_0);
 					break;
 				case ADJ_MODE_GRIMM:
 				default:
 					param.pm_1_0 = (df[0]<<24) | (df[1]<<16) | (df[2]<<8) | df[3];
 					param.pm_2_5 = (df[4]<<24) | (df[5]<<16) | (df[6]<<8) | df[7];
 					param.pm_10_0 = (df[8]<<24) | (df[9]<<16) | (df[10]<<8) | df[11];
-					printf("Pm2008Task: 3 (%ld: %ld: %ld) \r\n", param.pm_1_0, param.pm_2_5, param.pm_10_0);
+					//printf("Pm2008Task: 3 (%ld: %ld: %ld) \r\n", param.pm_1_0, param.pm_2_5, param.pm_10_0);
 					break;
 			}
 		}
@@ -101,7 +101,7 @@ void Pm2008Task(void* arg)
 		}
 
 cont:
-		printf("## Dust %d: ScanPeriod(%ld)\n", __LINE__, pDustDev->ScanPeriod);
+		//printf("## Dust %d: ScanPeriod(%ld)\n", __LINE__, pDustDev->ScanPeriod);
 //		usleep(pDustDev->ScanPeriod*1000);
 //		continue;
 //	}

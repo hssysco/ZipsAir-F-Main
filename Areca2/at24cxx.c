@@ -57,29 +57,29 @@ uint8_t i2c_24c02_test(void)
     /* initialize i2c_buffer_write */
     for(i = 0;i < BUFFER_SIZE;i++){ 
         i2c_buffer_write[i]=i;
-        printf("0x%02X ",i2c_buffer_write[i]);
+        //printf("0x%02X ",i2c_buffer_write[i]);
         if(15 == i%16){
-//            printf("\r\n");
+//            //printf("\r\n");
         }
     }
     /* EEPROM data write */
     eeprom_buffer_write(i2c_buffer_write,EEP_FIRST_PAGE, BUFFER_SIZE); 
-//    printf("AT24C02 reading...\r\n");
+//    //printf("AT24C02 reading...\r\n");
     /* EEPROM data read */
     eeprom_buffer_read(i2c_buffer_read,EEP_FIRST_PAGE, BUFFER_SIZE); 
     /* compare the read buffer and write buffer */
     for(i = 0;i < BUFFER_SIZE;i++){
         if(i2c_buffer_read[i] != i2c_buffer_write[i]){
-            printf("0x%02X ", i2c_buffer_read[i]);
-            printf("Err:data read and write aren't matching.\n\r");
+            //printf("0x%02X ", i2c_buffer_read[i]);
+            //printf("Err:data read and write aren't matching.\n\r");
             return I2C_FAIL;
         }
-        printf("0x%02X ", i2c_buffer_read[i]);
+        //printf("0x%02X ", i2c_buffer_read[i]);
         if(15 == i%16){
-            printf("\r\n");
+            //printf("\r\n");
         }
     }
-    printf("I2C-AT24C02 test passed!\n\r");
+    //printf("I2C-AT24C02 test passed!\n\r");
     return I2C_OK;
 }
 

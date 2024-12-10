@@ -1,16 +1,6 @@
 #include "gd32f30x.h"
 #include <stdio.h>
 #include <string.h>
-//#include "freertos/FreeRTOS.h"
-//#include "freertos/task.h"
-//#include "freertos/queue.h"
-//#include "freertos/semphr.h"
-//#include "esp_err.h"
-//#include "esp_log.h"
-//#include "driver/rmt.h"
-//#include "driver/periph_ctrl.h"
-//#include "soc/rmt_reg.h"
-
 #include "remote.h"
 
 typedef enum
@@ -114,33 +104,8 @@ typedef struct ir_parser_s ir_parser_t;
  */
 struct ir_parser_s 
 {
-	/**
-	 * @brief Input raw data to IR parser
-	 *
-	 * @param[in] parser: Handle of IR parser
-	 * @param[in] raw_data: Raw data which need decoding by IR parser
-	 * @param[in] length: Length of raw data
-	 *
-	 * @return
-	 *	   - ESP_OK: Input raw data successfully
-	 *	   - ESP_ERR_INVALID_ARG: Input raw data failed because of invalid argument
-	 *	   - ESP_FAIL: Input raw data failed because some other error occurred
-	 */
 	int16_t (*input)(ir_parser_t *parser, void *raw_data, uint32_t length);
 
-	/**
-	 * @brief Get the scan code after decoding of raw data
-	 *
-	 * @param[in] parser: Handle of IR parser
-	 * @param[out] address: Address of the scan code
-	 * @param[out] command: Command of the scan code
-	 * @param[out] repeat: Indicate if it's a repeat code
-	 *
-	 * @return
-	 *	   - ESP_OK: Get scan code successfully
-	 *	   - ESP_ERR_INVALID_ARG: Get scan code failed because of invalid arguments
-	 *	   - ESP_FAIL: Get scan code failed because some error occurred
-	 */
 	int16_t (*get_scan_code)(ir_parser_t *parser, uint32_t *address, uint32_t *command, bool *repeat);
 
 	/**
@@ -188,24 +153,11 @@ typedef struct
 	bool inverse;
 }parser_t;
 
-static inline bool check_in_range(uint32_t raw_ticks, uint32_t target_ticks, uint32_t margin_ticks)
-{
-	return (raw_ticks < (target_ticks + margin_ticks)) && (raw_ticks > (target_ticks - margin_ticks));
-}
+
 
 static bool parse_head(parser_t *pParser)
 {
     bool ret = true;
-	pParser->cursor = 0;
-
-//	rmt_item32_t item = pParser->buffer[pParser->cursor];
-//
-//	ret = (item.level0 == pParser->inverse) && (item.level1 != pParser->inverse) &&
-//		check_in_range(item.duration0, pParser->leading_code_high_ticks, pParser->margin_ticks) &&
-//		check_in_range(item.duration1, pParser->leading_code_low_ticks, pParser->margin_ticks);
-//	pParser->cursor += 1;
-//
-//	printf("@@ parse_head E (%d) !!! \r\n", ret);	
 	return ret;
 }
 
@@ -213,10 +165,6 @@ static bool parse_logic0(parser_t *pParser)
 {
     bool ret = true;
     
-//	rmt_item32_t item = pParser->buffer[pParser->cursor];
-//	ret = (item.level0 == pParser->inverse) && (item.level1 != pParser->inverse) &&
-//		check_in_range(item.duration0, pParser->payload_logic0_high_ticks, pParser->margin_ticks) &&
-//		check_in_range(item.duration1, pParser->payload_logic0_low_ticks, pParser->margin_ticks);
 	return ret;
 }
 
@@ -224,10 +172,6 @@ static bool parse_logic1(parser_t *pParser)
 {
     bool ret = true;
 
-//    rmt_item32_t item = pParser->buffer[pParser->cursor];
-//	ret = (item.level0 == pParser->inverse) && (item.level1 != pParser->inverse) &&
-//		check_in_range(item.duration0, pParser->payload_logic1_high_ticks, pParser->margin_ticks) &&
-//		check_in_range(item.duration1, pParser->payload_logic1_low_ticks, pParser->margin_ticks);
 	return ret;
 }
 
@@ -235,176 +179,27 @@ static int16_t parse_logic(ir_parser_t *parser, bool *logic)
 {
 	int16_t ret = -1;
 	bool logic_value = false;
-
-//	parser_t *pParser = __containerof(parser, parser_t, parent);
-//
-//	if (parse_logic0(pParser)) 
-//	{
-//		logic_value = false;
-//		ret = ESP_OK;
-//	} 
-//	else if (parse_logic1(pParser)) 
-//	{
-//		logic_value = true;
-//		ret = ESP_OK;
-//	}
-//
-//	if (ret == ESP_OK) 
-//	{
-//		*logic = logic_value;
-//	}
-//
-//	pParser->cursor += 1;
-
 	return ret;
 }
 
 static bool parse_repeat_frame(parser_t *pParser)
 {
     bool ret = true;
-	pParser->cursor = 0;
-//	rmt_item32_t item = pParser->buffer[pParser->cursor];
-//	ret = (item.level0 == pParser->inverse) && (item.level1 != pParser->inverse) &&
-//		check_in_range(item.duration0, pParser->repeat_code_high_ticks, pParser->margin_ticks) &&
-//		check_in_range(item.duration1, pParser->repeat_code_low_ticks, pParser->margin_ticks);
-//	pParser->cursor += 1;
+
 	return ret;
 }
 
 static int16_t parser_input(ir_parser_t *parser, void *raw_data, uint32_t length)
 {
-	int16_t ret = 0;
-//	parser_t *pParser = __containerof(parser, parser_t, parent);
-//
-//	CHECK(raw_data, "input data can't be null", err, ESP_ERR_INVALID_ARG);
-//	pParser->buffer = raw_data;
-//	// Data Frame costs 34 items and Repeat Frame costs 2 items
-//	if (length == DATA_FRAME_RMT_WORDS) 
-//	{
-//		pParser->repeat = false;
-//	} 
-//	else if (length == REPEAT_FRAME_RMT_WORDS) 
-//	{
-//		pParser->repeat = true;
-//	} 
-//	else 
-//	{
-//		ret = ESP_FAIL;
-//	}
+    int16_t ret = true;
 
-	return ret;
-err:
 	return ret;
 }
 
 static int16_t parser_get_scan_code(ir_parser_t *parser, uint32_t *address, uint32_t *command, bool *repeat)
 {
 	int16_t ret = -1;
-	uint32_t addr = 0;
-	uint32_t cmd = 0;
-	bool logic_value = false;
-//	parser_t *pParser = __containerof(parser, parser_t, parent);
-//
-//	CHECK(address && command && repeat, "address, command and repeat can't be null", out, ESP_ERR_INVALID_ARG);
-//	if (pParser->repeat) 
-//	{
-//		if (parse_repeat_frame(pParser)) 
-//		{
-//			*address = pParser->last_address;
-//			*command = pParser->last_command;
-//			*repeat = true;
-//			ret = ESP_OK;
-//		}
-//	} 
-//	else 
-//	{
-//		if (parse_head(pParser)) 
-//		{
-//#if 1
-//			for (int i = 0; i < 24; i++) 
-//			{
-//				if (parse_logic(parser, &logic_value) == ESP_OK) 
-//				{
-//					addr |= (logic_value << i);
-//				}
-//			}
-//
-//			for (int i = 0; i < 24; i++) 
-//			{
-//				if (parse_logic(parser, &logic_value) == ESP_OK) 
-//				{
-//					cmd |= (logic_value << i);
-//				}
-//			}
-//#else
-//			if(parse_head(pParser))
-//			{
-//				for (int i = 0; i < 48; i++)
-//				{
-//					if(parse_logic(parser, &logic_value) == ESP_OK)
-//					{
-//						addr |= (logic_value << i);
-//					}
-//				}
-//			}
-//#endif
-//			*address = addr;
-//			*command = cmd;
-//			*repeat = false;
-//			// keep it as potential repeat code
-//			pParser->last_address = addr;
-//			pParser->last_command = cmd;
-//			ret = ESP_OK;
-//		}
-//	}
-//out:
-//	//	printf("@@ parser_get_scan_code E (%d) !!! \r\n", ret);
-//
-//	return ret;
-//}
-//
-//static int16_t parser_del(ir_parser_t *parser)
-//{
-//	parser_t *pParser = __containerof(parser, parser_t, parent);
-//
-//	free(pParser);
-//	return ESP_OK;
-//}
-//
-//ir_parser_t *ir_parser_rmt_new(const ir_parser_config_t *config, uint32_t counter_clk_hz)
-//{
-//	ir_parser_t *ret = NULL;
-//	float ratio  = 0;
-//
-//	CHECK(config, "nec configuration can't be null", err, NULL);
-//
-//	parser_t *pParser = calloc(1, sizeof(parser_t));
-//	CHECK(pParser, "request memory for nec_parser failed", err, NULL);
-//
-//	pParser->flags = config->flags;
-//	if (config->flags & IR_TOOLS_FLAGS_INVERSE) 
-//	{
-//		pParser->inverse = true;
-//	}
-//
-//	ratio = (float)counter_clk_hz / 1e6;
-//
-//	pParser->leading_code_high_ticks = (uint32_t)(ratio * LEADING_CODE_HIGH_US);
-//	pParser->leading_code_low_ticks = (uint32_t)(ratio * LEADING_CODE_LOW_US);
-//	pParser->repeat_code_high_ticks = (uint32_t)(ratio * REPEAT_CODE_HIGH_US);
-//	pParser->repeat_code_low_ticks = (uint32_t)(ratio * REPEAT_CODE_LOW_US);
-//	pParser->payload_logic0_high_ticks = (uint32_t)(ratio * PAYLOAD_ZERO_HIGH_US);
-//	pParser->payload_logic0_low_ticks = (uint32_t)(ratio * PAYLOAD_ZERO_LOW_US);
-//	pParser->payload_logic1_high_ticks = (uint32_t)(ratio * PAYLOAD_ONE_HIGH_US);
-//	pParser->payload_logic1_low_ticks = (uint32_t)(ratio * PAYLOAD_ONE_LOW_US);
-//	pParser->margin_ticks = (uint32_t)(ratio * config->margin_us);
-//
-//	pParser->parent.input = parser_input;
-//	pParser->parent.get_scan_code = parser_get_scan_code;
-//	pParser->parent.del = parser_del;
-//
-//	return &(pParser->parent);
-//err:
+
 	return ret;
 }
 
@@ -496,7 +291,7 @@ void RmtRXTask(void* arg)
 //				repeat = false;
 //				if (ir_parser->get_scan_code(ir_parser, &addr, &cmd, &repeat) == ESP_OK) 
 //				{			
-//					printf("@@ Rmt 2(%.6x : %.6x) !!! \r\n", addr , cmd);
+//					//printf("@@ Rmt 2(%.6x : %.6x) !!! \r\n", addr , cmd);
 //
 //					if(repeat == false)
 //					{
@@ -543,7 +338,7 @@ void RmtRXTask(void* arg)
 //								fan = (cmd&0xff);
 //								time = ((cmd >> 8)&0xff);
 //
-//								//printf("@@ Rmt 3 (%x) !!! \r\n", time); 					
+//								////printf("@@ Rmt 3 (%x) !!! \r\n", time); 					
 //
 //								resv = ((time&0x80) >> 7);
 //
@@ -600,7 +395,7 @@ void RmtRXTask(void* arg)
 //									param.ResvOn = 0;
 //								}
 //
-//								//								printf("@@ Rmt 4( %x :%d : %d: %d: %d: %d ) !!! \r\n", mode, sleep, flt, fan, resv, time);							
+//								//								//printf("@@ Rmt 4( %x :%d : %d: %d: %d: %d ) !!! \r\n", mode, sleep, flt, fan, resv, time);							
 //
 //								if(mode == 0)	/* Auto */
 //								{
@@ -640,7 +435,7 @@ void RmtRXTask(void* arg)
 //								param.ResvTime = time;
 //							}
 //
-//							//							printf("@@ Rmt 5( %d : %d: %d: %d: %d ) !!! \r\n", param.Mode, param.FanLevel, param.ResetFlt, param.ResvOn, param.ResvTime);							
+//							//							//printf("@@ Rmt 5( %d : %d: %d: %d: %d ) !!! \r\n", param.Mode, param.FanLevel, param.ResetFlt, param.ResvOn, param.ResvTime);							
 //
 //							if (pRmtDev->fnRmtCallback) 
 //							{

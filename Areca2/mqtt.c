@@ -44,60 +44,60 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
         case MQTT_EVENT_CONNECTED:
 			pMqttInf->Connected = 1;
 //            ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-			printf("### MQTT_EVENT_CONNECTED ++++ !!!\r\n");
+			//printf("### MQTT_EVENT_CONNECTED ++++ !!!\r\n");
 			msg_id = esp_mqtt_client_subscribe(client, pMqttInf->Topic, 0);
 //            ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-			printf("### MQTT_EVENT_CONNECTED ----(%d)!!!\r\n", msg_id);
+			//printf("### MQTT_EVENT_CONNECTED ----(%d)!!!\r\n", msg_id);
 
             break;
 
         case MQTT_EVENT_DISCONNECTED:
 //            ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
 			pMqttInf->Connected = 0;
-			printf("### MQTT_EVENT_DISCONNECTED ++++ !!!\r\n");
+			//printf("### MQTT_EVENT_DISCONNECTED ++++ !!!\r\n");
             break;
 
         case MQTT_EVENT_SUBSCRIBED:
 //            ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
-			printf("### MQTT_EVENT_SUBSCRIBED pMqttInf->Connected (%d) ++++ !!!\r\n", pMqttInf->Connected);
+			//printf("### MQTT_EVENT_SUBSCRIBED pMqttInf->Connected (%d) ++++ !!!\r\n", pMqttInf->Connected);
 			pMqttInf->Connected = 2;
 
 //            msg_id = esp_mqtt_client_publish(client, pMqttInf->Topic, "data", 0, 0, 0);
 //            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-			printf("### MQTT_EVENT_SUBSCRIBED pMqttInf->Connected (%d)----!!!\r\n", pMqttInf->Connected);
+			//printf("### MQTT_EVENT_SUBSCRIBED pMqttInf->Connected (%d)----!!!\r\n", pMqttInf->Connected);
             break;
 			
         case MQTT_EVENT_UNSUBSCRIBED:
 //            ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
-			printf("### MQTT_EVENT_UNSUBSCRIBED msg_id=%d ++++ !!!\r\n", event->msg_id);
+			//printf("### MQTT_EVENT_UNSUBSCRIBED msg_id=%d ++++ !!!\r\n", event->msg_id);
             break;
 		
         case MQTT_EVENT_PUBLISHED:
 //            ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
-			printf("### MQTT_EVENT_PUBLISHED msg_id=%d ++++ !!!\r\n", event->msg_id);
+			//printf("### MQTT_EVENT_PUBLISHED msg_id=%d ++++ !!!\r\n", event->msg_id);
             break;
 		
         case MQTT_EVENT_DATA:
 //            ESP_LOGI(TAG, "MQTT_EVENT_DATA");
 
-			printf("### MQTT_EVENT_DATA msg_id=%d ++++ !!!\r\n", event->msg_id);
+			//printf("### MQTT_EVENT_DATA msg_id=%d ++++ !!!\r\n", event->msg_id);
 		
-//            printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-//            printf("DATA=%.*s\r\n", event->data_len, event->data);
-			  printf("TOPIC len (%d) \r\n", event->topic_len);
-			  printf("DATA len (%d) \r\n", event->data_len);
+//            //printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+//            //printf("DATA=%.*s\r\n", event->data_len, event->data);
+			  //printf("TOPIC len (%d) \r\n", event->topic_len);
+			  //printf("DATA len (%d) \r\n", event->data_len);
 			/* message receive from server*/
 			  MessageCallback(event);
             break;
 			
         case MQTT_EVENT_ERROR:
 //            ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
-			printf("### MQTT_EVENT_ERROR ++++ !!!\r\n");
+			//printf("### MQTT_EVENT_ERROR ++++ !!!\r\n");
             break;
 		
         default:
 //            ESP_LOGI(TAG, "Other event id:%d", event->event_id);
-			printf("### Other event id:%d ++++ !!!\r\n", event->event_id);
+			//printf("### Other event id:%d ++++ !!!\r\n", event->event_id);
             break;
     }
     return ESP_OK;
@@ -124,16 +124,16 @@ void SendStat(void) {
 	GetAbovTxInfo(&pTxData);
 	GetAbovRxInfo(&pRxData);	
 
-	printf("MQTT: SendStat 1 !!!!  !!\r\n");
+	//printf("MQTT: SendStat 1 !!!!  !!\r\n");
 
 	GetSensorInfo(&pSensorInfo);
-	printf("MQTT: SendStat 2 (%p) !!!!  !!\r\n", pSensorInfo);
+	//printf("MQTT: SendStat 2 (%p) !!!!  !!\r\n", pSensorInfo);
 	
 	GetSystemInfo(&pSystemInfo);
-	printf("MQTT: SendStat 3 (%p) !!!!  !!\r\n", pSystemInfo);
+	//printf("MQTT: SendStat 3 (%p) !!!!  !!\r\n", pSystemInfo);
 
 	GetPersistDataInfo(&pPersistDataInfo);
-	printf("MQTT: SendStat 4 (%p) !!!!	!!\r\n", pPersistDataInfo);
+	//printf("MQTT: SendStat 4 (%p) !!!!	!!\r\n", pPersistDataInfo);
 
 	pub = cJSON_CreateObject();
 	cmdtype = cJSON_CreateString("STAT");
@@ -167,11 +167,11 @@ void SendStat(void) {
 	cJSON_AddItemToObject(pub, "context", item);
 
 	data = cJSON_Print(pub);
-	printf("MQTT: SendStat 5 (%p) !!!!	!!\r\n", data);
+	//printf("MQTT: SendStat 5 (%p) !!!!	!!\r\n", data);
 	
 	if (data && pMqttInf->mqttHdl) {
 		rc = esp_mqtt_client_publish(( esp_mqtt_client_handle_t )pMqttInf->mqttHdl, pMqttInf->Topic, data, strlen(data), 0, 0);	
-		printf("MQTT: Send STATUS context:: esp_mqtt_client_publish (%d) !!\r\n", rc);
+		//printf("MQTT: Send STATUS context:: esp_mqtt_client_publish (%d) !!\r\n", rc);
 	}
 
 	if (data)
@@ -180,11 +180,11 @@ void SendStat(void) {
 		data = NULL;
 	}	
 
-	printf("MQTT: SendStat 6 (%p) !!!!	!!\r\n", data);
+	//printf("MQTT: SendStat 6 (%p) !!!!	!!\r\n", data);
 
 	cJSON_Delete(pub);
 
-	printf("MQTT: SendStat END !!!!	!!\r\n");
+	//printf("MQTT: SendStat END !!!!	!!\r\n");
 
 	return;
 }
@@ -202,12 +202,12 @@ void MessageCallback(esp_mqtt_event_handle_t event) {
 
 
 	match = strncmp(pMqttInf->Topic,event->topic, event->topic_len);
-	printf("### MessageCallback: (%d) \r\n", match);
+	//printf("### MessageCallback: (%d) \r\n", match);
 	
 	if (!match) {
 
-		printf("### Mosquitto: Matched MessageCallback \r\n");
-		printf("### Mosquitto: Len: %d \r\n", event->data_len);
+		//printf("### Mosquitto: Matched MessageCallback \r\n");
+		//printf("### Mosquitto: Len: %d \r\n", event->data_len);
 
 
 		root = cJSON_Parse((const char*)event->data);
@@ -218,21 +218,21 @@ void MessageCallback(esp_mqtt_event_handle_t event) {
 			}
 
 			if (!strncmp(str, "GET", 3)) {
-				printf("Mosquitto: GET !!!! \r\n");
+				//printf("Mosquitto: GET !!!! \r\n");
 
 			}
 			else if (!strncmp(str, "SET", 3)) {
-				printf("Mosquitto: SET !!!! \r\n");
+				//printf("Mosquitto: SET !!!! \r\n");
 
 			}
 			else if (!strncmp(str, "STAT", 4) || !strncmp(str, "RET", 3)) {
-				printf("Mosquitto: Ignore %s command type \r\n", str);
+				//printf("Mosquitto: Ignore %s command type \r\n", str);
 				datavalue = cJSON_GetIntValue(cJSON_GetObjectItem(root, "cmdCopy"));
-				printf("Mosquitto: What (%lf) \r\n", datavalue);		
+				//printf("Mosquitto: What (%lf) \r\n", datavalue);		
 			
 			}
 			else if (str) {
-				printf("Mosquitto: Unknown Command Type(%s) \r\n", str);
+				//printf("Mosquitto: Unknown Command Type(%s) \r\n", str);
 				goto json_done;
 			}
 
@@ -269,13 +269,13 @@ void InitMqtt( MqttInfoT *pMqttInfo)
 
 
 	if(pMqttInfo == NULL) {
-		printf("### InitMqtt :: return !!! \r\n");
+		//printf("### InitMqtt :: return !!! \r\n");
 		return;
 	}
 
 	pMqttInf = pMqttInfo;
 
-	printf("### InitMqtt :: URI(%s), port(%d), clientID(%s), username(%s), password(%s) \r\n", pMqttInf->Addr, pMqttInf->Port, pMqttInf->ClientId, pMqttInf->Username, pMqttInf->Password  );
+	//printf("### InitMqtt :: URI(%s), port(%d), clientID(%s), username(%s), password(%s) \r\n", pMqttInf->Addr, pMqttInf->Port, pMqttInf->ClientId, pMqttInf->Username, pMqttInf->Password  );
 
 	sMqttCfg.host = pMqttInf->Addr;
 	sMqttCfg.port = pMqttInf->Port;
@@ -287,7 +287,7 @@ void InitMqtt( MqttInfoT *pMqttInfo)
 	client = esp_mqtt_client_init(&sMqttCfg);
 	err = esp_mqtt_client_start(client);
 	pMqttInf->mqttHdl = (void *)(client);
-	printf("### InitMqtt :: esp_mqtt_client_start (%d) !!!\r\n", err);	
+	//printf("### InitMqtt :: esp_mqtt_client_start (%d) !!!\r\n", err);	
 
     xTaskCreate(MqttTask, "MQTT Task", 4096, NULL, 5, NULL);
 

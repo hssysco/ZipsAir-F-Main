@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "D:\Project\HanSungSysco\1_Software\areca_2\02_TEST\EWARM\settings\GD32303C.Debug.general.xcl" --backend -f "D:\Project\HanSungSysco\1_Software\areca_2\02_TEST\EWARM\settings\GD32303C.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "D:\Project\HanSungSysco\1_Software\areca_2\backup\Areca2(20241011)\Areca2(241007)\EWARM\settings\GD32303C.Debug.general.xcl" --backend -f "D:\Project\HanSungSysco\1_Software\areca_2\backup\Areca2(20241011)\Areca2(241007)\EWARM\settings\GD32303C.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "D:\Project\HanSungSysco\1_Software\areca_2\02_TEST\EWARM\settings\GD32303C.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\Project\HanSungSysco\1_Software\areca_2\02_TEST\EWARM\settings\GD32303C.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "D:\Project\HanSungSysco\1_Software\areca_2\backup\Areca2(20241011)\Areca2(241007)\EWARM\settings\GD32303C.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\Project\HanSungSysco\1_Software\areca_2\backup\Areca2(20241011)\Areca2(241007)\EWARM\settings\GD32303C.Debug.driver.xcl" 
 
 @echo off 
 :end

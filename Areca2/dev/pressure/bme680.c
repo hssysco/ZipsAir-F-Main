@@ -54,7 +54,7 @@ static int i2c_driver_initialize()
 //	
 //	rc = i2c_driver_install(I2C_NUM, I2C_MODE_MASTER, 0, 0, 0);
 //
-//	printf("## Bme680 i2c_driver_initialize: rc (%d) \r\n",rc);
+//	//printf("## Bme680 i2c_driver_initialize: rc (%d) \r\n",rc);
     
     /* enable GPIOB clock */
     rcu_periph_clock_enable(RCU_GPIOB);
@@ -76,7 +76,7 @@ static int i2c_driver_initialize()
     /* enable acknowledge */
     i2c_ack_config(RCU_I2C1,I2C_ACK_ENABLE);
     
-    printf("## Bme680 i2c_driver_initialize: rc (%d) \r\n",rc);
+    //printf("## Bme680 i2c_driver_initialize: rc (%d) \r\n",rc);
 
 	return rc;
 }
@@ -359,7 +359,7 @@ void InitPressure (DrvPressureDevT *pPressureDev)
 	if (ret.bme680_status || ret.bsec_status) 
 	{
 		/* Could not intialize BME680 */
-		printf("%d: Could not intialize BME680: bme status(%d), bsec status(%d): \n", __LINE__,(int)ret.bme680_status, (int)ret.bsec_status);
+		//printf("%d: Could not intialize BME680: bme status(%d), bsec status(%d): \n", __LINE__,(int)ret.bme680_status, (int)ret.bsec_status);
 	
 	}
 	else

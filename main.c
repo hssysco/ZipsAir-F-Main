@@ -34,10 +34,9 @@ OF SUCH DAMAGE.
 
 //==============================================================================
 #include "gd32f30x.h"
-//#include "gd32f303c_eval.h"
 #include "systick.h"
-#include <stdio.h>
-
+#include <stdio.h>.
+#include "gd32f30x_rcu.h"
 
 extern void app_main();
 
@@ -50,9 +49,6 @@ extern void app_main();
 //==============================================================================
 int main(void)
 {  
-    /* initialize the LEDs */
-//    led_init();
-    
     /* configure systick */
     systick_config();
 
@@ -64,3 +60,4 @@ int main(void)
     
     app_main();
 }
+

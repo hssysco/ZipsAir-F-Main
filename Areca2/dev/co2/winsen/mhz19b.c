@@ -74,7 +74,7 @@ void Mhz19bTask(void* arg)
 		switch(sensor_state) 
 		{
 			case STATE_CALIBRATION_ZERO_POINT:
-				printf("enter co2 calibration zero point mode \r\n");
+				//printf("enter co2 calibration zero point mode \r\n");
 				cmd[2] = (unsigned char)MHZ19B_CMD_ZERO_POINT_CALIBRATION;
 				cmd[8] = getCheckSum(cmd, sizeof(cmd));
 				rc = SerialWrite(CO2, cmd, MHZ19B_CMD_LENGTH);
@@ -88,7 +88,7 @@ void Mhz19bTask(void* arg)
 				goto cont;
 				
 			case STATE_CALIBRATION_SPAN_POINT:
-				printf("enter co2 calibration span point mode \r\n");
+				//printf("enter co2 calibration span point mode \r\n");
 				cmd[2] = (unsigned char)MHZ19B_CMD_SPAN_POINT_CALIBRATION;
 				cmd[8] = getCheckSum(cmd, sizeof(cmd));
 				rc = SerialWrite(CO2, cmd, MHZ19B_CMD_LENGTH);
@@ -139,7 +139,7 @@ void Mhz19bTask(void* arg)
 		}
 		else 
 		{
-//			printf("%d: checksum mismatched(expected:%x, real:%x) \r\n", __LINE__, getCheckSum(buf, sizeof(cmd)), buf[8]);
+//			//printf("%d: checksum mismatched(expected:%x, real:%x) \r\n", __LINE__, getCheckSum(buf, sizeof(cmd)), buf[8]);
 			co2event = 0;
 		}
 
@@ -148,7 +148,7 @@ void Mhz19bTask(void* arg)
 			pCo2Dev->fnCo2Callback(co2event);
 		}
 
-//		printf("%d: co2(%x)(%ld)(%d) \r\n", __LINE__, co2event, pCo2Dev->ScanPeriod, co2event);
+//		//printf("%d: co2(%x)(%ld)(%d) \r\n", __LINE__, co2event, pCo2Dev->ScanPeriod, co2event);
 
 cont:
 		usleep(pCo2Dev->ScanPeriod*1000);

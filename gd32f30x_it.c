@@ -64,6 +64,8 @@ extern uint8_t ThermoRxstart;
 extern uint8_t ThermoRxend;
 extern uint8_t ThermoRxCnt;
 
+extern void Wdt_ClkOut(void);
+
 //==============================================================================
 //      NMI exception
 //==============================================================================
@@ -148,6 +150,7 @@ void SysTick_Handler(void)
        Uart_TxTime++;
     if(Uart_RxTime < 60000)
        Uart_RxTime++;
+    Wdt_ClkOut();
 }
 
 
@@ -161,24 +164,24 @@ void USART0_IRQHandler(void)
     
     if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_RBNE)){
         /* read one byte from the receive data register */
-        if(AboveRxCnt < 100) {
-            rx_tmp = (uint8_t)usart_data_receive(UART4);
-        }
-        if(rx_tmp == 0x7E) {
-            AboveRxstart = 1;
-            AboveRxend = 0;
-            AboveRxCnt = 0;            
-        }    
-        if(AboveRxstart == 1) {
-            AboveRxData[AboveRxCnt++] = rx_tmp;
-            if(rx_tmp == 0x7f)
-                AboveRxend = 1;
-        }
-        
-        if(AboveRxCnt >= 99) {
-            AboveRxCnt = 0;
-            AboveRxstart = 0;
-        }
+//        if(AboveRxCnt < 100) {
+//            rx_tmp = (uint8_t)usart_data_receive(UART4);
+//        }
+//        if(rx_tmp == 0x7E) {
+//            AboveRxstart = 1;
+//            AboveRxend = 0;
+//            AboveRxCnt = 0;            
+//        }    
+//        if(AboveRxstart == 1) {
+//            AboveRxData[AboveRxCnt++] = rx_tmp;
+//            if(rx_tmp == 0x7f)
+//                AboveRxend = 1;
+//        }
+//        
+//        if(AboveRxCnt >= 99) {
+//            AboveRxCnt = 0;
+//            AboveRxstart = 0;
+//        }
         Uart_RxTime = 0;
         usart_flag_clear(USART0, USART_FLAG_RBNE);
     }       
@@ -195,10 +198,28 @@ void USART0_IRQHandler(void)
 //=============================================================================
 void USART1_IRQHandler(void)
 {
+    uint8_t rx_tmp;
     if(RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_RBNE)){
         /* read one byte from the receive data register */
-        usart_flag_clear(USART1, USART_FLAG_RBNE);
+        rx_tmp = (uint8_t)usart_data_receive(USART1);
+
+        if( (rx_tmp == 0x7E)&&(AboveRxstart == 0) ) {
+            AboveRxstart = 1;
+            AboveRxend = 0;
+            AboveRxCnt = 0;            
+        }    
+        if(AboveRxstart == 1) {
+            AboveRxData[AboveRxCnt++] = rx_tmp;
+            if(rx_tmp == 0x7f)
+                AboveRxend = 1;
+        }
+        
+        if(AboveRxCnt >= 99) {
+            AboveRxCnt = 0;
+            AboveRxstart = 0;
+        }
         Uart_RxTime = 0;
+        usart_flag_clear(USART1, USART_FLAG_RBNE);
     }       
 
     if((RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_TC))||(UART2_TX_Sts == SET)){

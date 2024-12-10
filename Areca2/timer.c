@@ -56,14 +56,14 @@ int CreateTimer( char *pTimerName, char periodicflag, uint64_t period_us, void *
 
 	if((pTimerName == NULL) || (pFunction == NULL)) 
 	{
-		printf("%s:%d Invalid parameter\n", __FUNCTION__, __LINE__);
+		//printf("%s:%d Invalid parameter\n", __FUNCTION__, __LINE__);
 		return -1;
 	}
 
 	instance = GetAvailableInstance();
 	if(instance < 0) 
 	{
-		printf("%s:%d No valid timer exists\n", __FUNCTION__, __LINE__);
+		//printf("%s:%d No valid timer exists\n", __FUNCTION__, __LINE__);
 		return -2;
 	}
 
@@ -78,7 +78,7 @@ int CreateTimer( char *pTimerName, char periodicflag, uint64_t period_us, void *
 
 //	if(err != ESP_OK )
 //	{
-//		printf("%s:%d esp timer create fail\n", __FUNCTION__, __LINE__);
+//		//printf("%s:%d esp timer create fail\n", __FUNCTION__, __LINE__);
 //		return -3;
 //	}
 //
@@ -94,7 +94,7 @@ int CreateTimer( char *pTimerName, char periodicflag, uint64_t period_us, void *
 //
 //	if(err != ESP_OK )
 //	{
-//		printf("%s:%d esp timer start fail\n", __FUNCTION__, __LINE__);
+//		//printf("%s:%d esp timer start fail\n", __FUNCTION__, __LINE__);
 //
 //		if(timerHandle != NULL) 
 //		{
@@ -114,7 +114,7 @@ int CreateTimer( char *pTimerName, char periodicflag, uint64_t period_us, void *
 //
 //		if(dataLen >= STR_NUM) 
 //		{
-//			sprintf(TimerConfig[instance].name, "TIMER%d", instance);		
+//			s//printf(TimerConfig[instance].name, "TIMER%d", instance);		
 //		}
 //		else 
 //		{
@@ -130,7 +130,7 @@ void DeleteTimerInstance (int Instance)
 
 	if((Instance >= TIMER_MAX_NUM) || (TimerConfig[Instance].used  == 0)) 
 	{
-		printf("Request delete invalid timerinstance %d\n", Instance);
+		//printf("Request delete invalid timerinstance %d\n", Instance);
 		return;
 	}
 

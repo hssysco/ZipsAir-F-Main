@@ -2,25 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-//#include "freertos/FreeRTOS.h"
-//#include "freertos/task.h"
-//#include "freertos/queue.h"
-//#include "driver/gpio.h"
 #include "gpio_dev.h"
 
-//#define GPIO_DOOR_PIN		34
-//#define GPIO_BUTTON_1		36
-//#define GPIO_INPUT_PIN_SEL  ((1ULL<<GPIO_DOOR_PIN) | (1ULL<<GPIO_BUTTON_1))
-//#define ESP_INTR_FLAG_DEFAULT 0
-
-//static xQueueHandle GPIO_EVT_QUEUE = NULL;
-//
-//static void IRAM_ATTR gpio_isr_handler(void* arg)
-//{
-//	uint32_t gpio_num = (uint32_t) arg;
-//
-//	xQueueSendFromISR(GPIO_EVT_QUEUE, &gpio_num, NULL);
-//}
 
 static uint32_t KEY_PORT[KEYn] = {REV0_GPIO_PORT, REV1_GPIO_PORT,
                                   REV2_GPIO_PORT, REV3_GPIO_PORT,

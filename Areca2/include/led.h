@@ -28,10 +28,10 @@ typedef enum {
 void InitLed(void);
 void Register_CommandLed (void);
 
-int OnLed ( Led_t led  );
-int OffLed ( Led_t led  );
-int OffAllLed (void);
-int OnAllLed (void);
+void OnLed ( uint8_t led  );
+void OffLed ( uint8_t led  );
+void OffAllLed (void);
+void OnAllLed (void);
 
 #endif /* __LED_H__ */
 

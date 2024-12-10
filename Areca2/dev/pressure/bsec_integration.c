@@ -175,11 +175,11 @@ return_values_init bsec_iot_init(float sample_rate, float temperature_offset, bm
     bme680_g.read = bus_read;
     bme680_g.delay_ms = sleep;
 
-	printf("### bsec_iot_init 1 !! \r\n");
+	//printf("### bsec_iot_init 1 !! \r\n");
     /* Initialize BME680 API */
     ret.bme680_status = bme680_init(&bme680_g);
 
-	printf("### bsec_iot_init :: bme680_init (%d) !! \r\n", ret.bme680_status);
+	//printf("### bsec_iot_init :: bme680_init (%d) !! \r\n", ret.bme680_status);
 	
     if (ret.bme680_status != BME680_OK)
     {

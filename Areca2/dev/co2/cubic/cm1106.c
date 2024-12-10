@@ -71,7 +71,7 @@ void Cm1106Task(void* arg)
 		{
 			case STATE_CALIBRATION_SPAN_POINT:
 			case STATE_CALIBRATION_ZERO_POINT:
-				printf("enter co2 calibration  \r\n");
+				//printf("enter co2 calibration  \r\n");
 				cmd[2] = CM1106_CMD_CALIBRATE_CON_VALUE; cmd[1] += 1;
 				cmd[3] = 0x01; cmd[1] += 1;
 				cmd[4] = 0x90; cmd[1] += 1;
@@ -127,7 +127,7 @@ void Cm1106Task(void* arg)
 			return;
 		}
 
-		printf("### CO2 1 !!! (%x: %x: %x: %x: %x: %x: %x: %x) \r\n", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+		//printf("### CO2 1 !!! (%x: %x: %x: %x: %x: %x: %x: %x) \r\n", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
 
 		packet_valid = (buf[0] == CM1106_ACK_START_BYTE && buf[2] == CM1106_CMD_READ_CO2_CONCENTRATION &&
 				buf[7] == getCheckSum(buf, buf[1] + 2));
@@ -141,14 +141,14 @@ void Cm1106Task(void* arg)
 			co2event = 0;
 		}
 
-		printf("### CO2 2 !!! (%d)(%x:%x)(%d) \r\n", packet_valid, buf[3], buf[4], co2event);
+		//printf("### CO2 2 !!! (%d)(%x:%x)(%d) \r\n", packet_valid, buf[3], buf[4], co2event);
 
 		if (pCo2Dev->fnCo2Callback && packet_valid) 
 		{
 			pCo2Dev->fnCo2Callback(co2event);
 		}
 
-		printf("%d: co2(%x)(%ld)(%d) \r\n", __LINE__, co2event, pCo2Dev->ScanPeriod, co2event);
+		//printf("%d: co2(%x)(%ld)(%d) \r\n", __LINE__, co2event, pCo2Dev->ScanPeriod, co2event);
 
 //cont:
 //		usleep(pCo2Dev->ScanPeriod*1000);

@@ -53,19 +53,19 @@ char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
 //	static int output_len;       // Stores number of bytes read
 //	switch(evt->event_id) {
 //		case HTTP_EVENT_ERROR:
-//			printf("HTTP_EVENT_ERROR\n");
+//			//printf("HTTP_EVENT_ERROR\n");
 //			break;
 //		case HTTP_EVENT_ON_CONNECTED:
-//			printf("HTTP_EVENT_ON_CONNECTED\n");
+//			//printf("HTTP_EVENT_ON_CONNECTED\n");
 //			break;
 //		case HTTP_EVENT_HEADER_SENT:
-//			printf("HTTP_EVENT_HEADER_SENT\n");
+//			//printf("HTTP_EVENT_HEADER_SENT\n");
 //			break;
 //		case HTTP_EVENT_ON_HEADER:
-//			printf("HTTP_EVENT_ON_HEADER, key=%s, value=%s\n", evt->header_key, evt->header_value);
+//			//printf("HTTP_EVENT_ON_HEADER, key=%s, value=%s\n", evt->header_key, evt->header_value);
 //			break;
 //		case HTTP_EVENT_ON_DATA:
-//			printf("HTTP_EVENT_ON_DATA, len=%d\n", evt->data_len);
+//			//printf("HTTP_EVENT_ON_DATA, len=%d\n", evt->data_len);
 //			if (esp_http_client_is_chunked_response(evt->client)) {
 //				// If user_data buffer is configured, copy the response into the buffer
 //				if (evt->user_data) {
@@ -75,7 +75,7 @@ char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
 //						output_buffer = (char *) malloc(esp_http_client_get_content_length(evt->client));
 //						output_len = 0;
 //						if (output_buffer == NULL) {
-//							printf("Failed to allocate memory for output buffer\n");
+//							//printf("Failed to allocate memory for output buffer\n");
 //							return ESP_FAIL;
 //						}
 //					}
@@ -86,7 +86,7 @@ char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
 //
 //			break;
 //		case HTTP_EVENT_ON_FINISH:
-//			printf("HTTP_EVENT_ON_FINISH\n");
+//			//printf("HTTP_EVENT_ON_FINISH\n");
 //			if (output_buffer != NULL) {
 //				free(output_buffer);
 //				output_buffer = NULL;
@@ -94,7 +94,7 @@ char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
 //			output_len = 0;
 //			break;
 //		case HTTP_EVENT_DISCONNECTED:
-//			printf("HTTP_EVENT_DISCONNECTED\n");
+//			//printf("HTTP_EVENT_DISCONNECTED\n");
 //			if (output_buffer != NULL) {
 //				free(output_buffer);
 //				output_buffer = NULL;
@@ -137,7 +137,7 @@ char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
 //		esp_efuse_mac_get_default((unsigned char*)mac);
 //	}
 //
-//	snprintf(mac_str, 20, "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+//	sn//printf(mac_str, 20, "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 //
 //	pItem = cJSON_CreateObject();
 //	cJSON_AddStringToObject(pItem,"macAdd", mac_str);
@@ -156,24 +156,24 @@ char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
 //	esp_http_client_set_post_field(client, pPrintedData, strlen(pPrintedData));
 //	err = esp_http_client_perform(client);
 //	if (err == ESP_OK) {
-//		printf("HTTP POST Status = %d, content_length = %d\n",
+//		//printf("HTTP POST Status = %d, content_length = %d\n",
 //				esp_http_client_get_status_code(client),
 //				esp_http_client_get_content_length(client));
 //		pResp = cJSON_Parse(local_response_buffer);
-//		printf("resp : %s\n", local_response_buffer);
+//		//printf("resp : %s\n", local_response_buffer);
 //		if(pResp)
 //		{
 //			if(cJSON_HasObjectItem(pResp, "serial"))
 //			{
 //				serial = cJSON_GetObjectItem(pResp, "serial")->valuestring;
 //				SetValueStr(PROP_NAME_SYS_SERIAL, serial);
-//				printf("serial : %s -> %s\n", pPersistDataInfo->Serial, serial);
+//				//printf("serial : %s -> %s\n", pPersistDataInfo->Serial, serial);
 //				strncpy(pPersistDataInfo->Serial, serial, MAX_SERIAL_STR_LEN);
 //				ret = 0;
 //			}
 //		}
 //	} else {
-//		printf("HTTP POST request failed: %s\n", esp_err_to_name(err));
+//		//printf("HTTP POST request failed: %s\n", esp_err_to_name(err));
 //	}
 //
 //	cJSON_Delete(pItem);
@@ -205,7 +205,7 @@ void FactoryTask()
 //			ret = download_serial(NULL, -1);
 			if(ret == 0)
 			{
-				printf("Serial download succeed\n");
+				//printf("Serial download succeed\n");
 				SetValueU8(PROP_NAME_SYS_FACTORY_DONE, 1);
 			}
 		}

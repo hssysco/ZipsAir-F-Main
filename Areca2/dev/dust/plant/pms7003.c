@@ -107,7 +107,7 @@ void Pms7003Task(void* arg)
 		}
 
 cont:
-//		printf("## Dust %d: ScanPeriod(%ld)\n", __LINE__, pDustDev->ScanPeriod);
+//		//printf("## Dust %d: ScanPeriod(%ld)\n", __LINE__, pDustDev->ScanPeriod);
 		usleep(pDustDev->ScanPeriod*1000);
 		continue;
 	}

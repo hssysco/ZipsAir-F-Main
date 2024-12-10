@@ -73,6 +73,7 @@ uint8_t AboveRxend = 0;
 uint8_t AboveRxData[100];
 uint8_t AboveRxCnt = 0;
 extern uint16_t     Uart_RxTime;
+extern void delay_1ms(uint32_t count);
 
     
 extern void delay_1ms(uint32_t count);
@@ -117,7 +118,7 @@ static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 }
 
 uint8_t revPktId = 0;
-	uint8_t Packet[FAU_RX_PACKET_SIZE];
+uint8_t Packet[FAU_RX_PACKET_SIZE];
 int CommandToAbov() 
 {
 
@@ -253,7 +254,9 @@ int CommandToAbov()
 	Packet[idx++] = PACKET_FAU_TAIL;
 
     gpio_bit_set(GPIOA, GPIO_PIN_1);
+    delay_1ms(2);
 	SendData(1, Packet, idx); // motor
+    delay_1ms(2);
     gpio_bit_reset(GPIOA, GPIO_PIN_1);
 
 //	SendData(AVOVE, Packet, idx);
@@ -316,9 +319,15 @@ int CommandToAbov()
 				break;
 
 			case ITEM_FAN_STATE:
-				if (revPktId > PktId) 
-				{
+//				if (revPktId > PktId) 
+//				{
+                    if(pItem[2] > 0)
+                        pAboveRxData->Power = 1;
+                    else 
+                        pAboveRxData->Power = 0;
+                        
 					pAboveRxData->FanLevel = pItem[2];
+					pAboveRxData->ErvLevel = 0;
 
 					if(pItem[3] == 0) 
 					{
@@ -329,7 +338,7 @@ int CommandToAbov()
 						pAboveRxData->Mode = OP_MODE_AUTO;
 					}
 
-				}
+//				}
 				break;
 				
 			case ITEM_RPM:
