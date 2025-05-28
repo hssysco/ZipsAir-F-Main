@@ -35,7 +35,7 @@ OF SUCH DAMAGE.
 //==============================================================================
 #include "gd32f30x.h"
 #include "systick.h"
-#include <stdio.h>.
+//#include <stdio.h>.
 #include "gd32f30x_rcu.h"
 
 extern void app_main();
@@ -52,11 +52,6 @@ int main(void)
     /* configure systick */
     systick_config();
 
-    /* USART interrupt configuration */
-    nvic_irq_enable(USART0_IRQn, 0, 0);
-    nvic_irq_enable(USART1_IRQn, 0, 0);
-    nvic_irq_enable(UART3_IRQn, 0, 0);
-    nvic_irq_enable(UART4_IRQn, 0, 0);
     
     app_main();
 }

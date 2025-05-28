@@ -26,7 +26,7 @@ typedef struct DustDev
 	void (*fnDustCallback)(DustEventT *);
 }DrvDustDevT;
 
-void InitDust (DrvDustDevT *pDustDev);
+void InitDust(void);
 
 #endif /* __DUST_H__ */
 

@@ -6,29 +6,6 @@
 
 
 
-//#define BUF_SIZE (1024)
-//
-//#define BUFF_SIZE	512
-//#define BAUD_RATE	9600
-
-//typedef struct SWUART
-//{
-//	unsigned char channel;
-//	char rx;
-//	char tx;
-//	unsigned int buffSize;
-//	unsigned int bitTime;
-//	unsigned int rx_start_time;
-//	unsigned int rx_end_time;
-////	bool invert;
-////	bool overflow;
-//	volatile unsigned int inPos;
-//	volatile unsigned int outPos;
-//	unsigned char buffer[BUFF_SIZE];
-//}tSWUart;
-//
-//tSWUart sSWUART[COMn];
-
 static rcu_periph_enum COM_CLK[COMn] = {COM1_CLK, COM2_CLK, COM3_CLK, COM4_CLK};
 static uint32_t COM_TX_PIN[COMn] = {COM1_TX_PIN, COM2_TX_PIN, COM3_TX_PIN, COM4_TX_PIN};
 static uint32_t COM_RX_PIN[COMn] = {COM1_RX_PIN, COM2_RX_PIN, COM3_RX_PIN, COM4_RX_PIN};
@@ -42,8 +19,7 @@ FlagStatus    UART3_TX_Sts = RESET;
 FlagStatus    UART3_RX_Sts = RESET;
 FlagStatus    UART4_TX_Sts = RESET;
 FlagStatus    UART4_RX_Sts = RESET;
-
-//static void IRAM_ATTR SWUartRxHandler(void *args);
+//extern SystemInfoT  SystemInfo;
 
 void com_init(uint32_t com, uint32_t baudrate)
 {
@@ -110,7 +86,12 @@ void InitSerialDriver(void)
     gpio_bit_reset(GPIOB, GPIO_PIN_4);
     gpio_pin_remap_config(GPIO_SWJ_NONJTRST_REMAP, ENABLE);    
     
-    com_init(COM1,9600);    // Zigbee
+    if(gpio_input_bit_get(GPIOA, GPIO_PIN_6) == SET)
+        com_init(COM1,460800  );    // Zigbee
+    else
+        com_init(COM1,115200 );    // Zigbee 
+    
+    
     com_init(COM2,9600);    // Motor
     com_init(COM3,9600);    // PM sensor
     com_init(COM4,9600);    // LED
@@ -133,42 +114,57 @@ void InitSerilInterrupt(void)
     /* enable USART4 receive, transmit interrupt */
     usart_interrupt_enable(UART4, USART_INT_RBNE);
 //    usart_interrupt_enable(UART4, USART_INT_TC);
+    
+    /* USART interrupt configuration */
+    nvic_irq_enable(USART0_IRQn, 0, 0);
+    nvic_irq_enable(USART1_IRQn, 0, 0);
+    nvic_irq_enable(UART3_IRQn, 0, 0);
+    nvic_irq_enable(UART4_IRQn, 0, 0);
+
 }
 
+extern uint16_t     Motor_CommTime;
 
-void uart_write_byte(uint8_t uart_num, const char *src) {
-
+void uart_write_byte(uint8_t uart_num, uint8_t *src) {
+    uint8_t tx_byte;
+    
+    tx_byte = *src;
     if(uart_num == 0) {
         UART1_TX_Sts = SET;
 //        while (usart_flag_get(COM1, USART_FLAG_TC) == SET); 
-        usart_data_transmit(COM1, *src); 
+        usart_data_transmit(COM1, tx_byte); 
         while (usart_flag_get(COM1, USART_FLAG_TC) == RESET); 
 //        while (UART1_TX_Sts == SET); 
     }
     else if(uart_num == 1) {
         UART2_TX_Sts = SET;
 //        while (usart_flag_get(COM2, USART_FLAG_TC) == SET); 
-        usart_data_transmit(COM2, *src); 
-        while (usart_flag_get(COM2, USART_FLAG_TC) == RESET); 
+        usart_data_transmit(COM2, tx_byte); 
+        while (usart_flag_get(COM2, USART_FLAG_TC) == RESET) {
+//            if(Motor_CommTime > 500) {
+//                usart_flag_clear(COM2, USART_FLAG_TC);
+//                return;
+//            }
+        }
 //        while (UART2_TX_Sts == SET); 
     } 
     else if(uart_num == 2) {
         UART3_TX_Sts = SET;
 //        while (usart_flag_get(COM3, USART_FLAG_TC) == SET); 
-        usart_data_transmit(COM3, *src); 
+        usart_data_transmit(COM3, tx_byte); 
         while (usart_flag_get(COM3, USART_FLAG_TC) == RESET); 
 //        while (UART3_TX_Sts == SET); 
     }
     else if(uart_num == 3) {
         UART4_TX_Sts = SET;
 //        while (usart_flag_get(COM4, USART_FLAG_TC) == SET); 
-        usart_data_transmit(COM4, *src); 
+        usart_data_transmit(COM4, tx_byte); 
         while (usart_flag_get(COM4, USART_FLAG_TC) == RESET); 
 //        while (UART4_TX_Sts == SET); 
     }
 }
 
-int SerialWrite(uint8_t channel, unsigned char *pData, unsigned int dataLen) 
+int SerialWrite(uint8_t channel, uint8_t *pData, uint16_t dataLen) 
 {
     uint8_t i;
 
@@ -179,7 +175,7 @@ int SerialWrite(uint8_t channel, unsigned char *pData, unsigned int dataLen)
     
     for (i = 0; i < dataLen; i++) {
 
-        uart_write_byte(channel, (char *)pData++);
+        uart_write_byte(channel, (uint8_t *)pData++);
     }
 	return 0;
 }

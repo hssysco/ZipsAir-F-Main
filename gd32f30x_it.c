@@ -37,6 +37,10 @@ OF SUCH DAMAGE.
 
 //#define tx_buffer_size   (countof(tx_buffer))
 //#define countof(a) (sizeof(a)/sizeof(*(a)))
+uint16_t readvalue1 = 0, readvalue2 = 0;
+__IO uint16_t ccnumber = 0;
+__IO uint32_t count = 0;
+__IO uint16_t fre = 0;
 
 extern FlagStatus    UART1_TX_Sts;
 extern FlagStatus    UART1_RX_Sts;
@@ -53,6 +57,7 @@ extern FlagStatus    UART4_RX_Sts;
 //extern uint16_t     tx_counter, rx_counter;
 extern uint16_t     Uart_TxTime;
 extern uint16_t     Uart_RxTime;
+extern uint16_t     Motor_CommTime;
 
 extern uint8_t AboveRxData[100];
 extern uint8_t AboveRxCnt;
@@ -63,6 +68,12 @@ extern uint8_t ThermoRxData[100];
 extern uint8_t ThermoRxstart;
 extern uint8_t ThermoRxend;
 extern uint8_t ThermoRxCnt;
+
+extern uint8_t ZigbeeRxData[100];
+extern uint8_t ZigbeeRxCnt;
+extern uint8_t ZigbeeRxstart;
+extern uint8_t ZigbeeRxend;
+extern uint16_t LedTimer;
 
 extern void Wdt_ClkOut(void);
 
@@ -150,6 +161,12 @@ void SysTick_Handler(void)
        Uart_TxTime++;
     if(Uart_RxTime < 60000)
        Uart_RxTime++;
+    if(Motor_CommTime < 60000)
+       Motor_CommTime++;
+    
+    if(LedTimer < 2000)
+        LedTimer++;
+    
     Wdt_ClkOut();
 }
 
@@ -164,32 +181,32 @@ void USART0_IRQHandler(void)
     
     if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_RBNE)){
         /* read one byte from the receive data register */
-//        if(AboveRxCnt < 100) {
-//            rx_tmp = (uint8_t)usart_data_receive(UART4);
-//        }
-//        if(rx_tmp == 0x7E) {
-//            AboveRxstart = 1;
-//            AboveRxend = 0;
-//            AboveRxCnt = 0;            
-//        }    
-//        if(AboveRxstart == 1) {
-//            AboveRxData[AboveRxCnt++] = rx_tmp;
-//            if(rx_tmp == 0x7f)
-//                AboveRxend = 1;
-//        }
-//        
-//        if(AboveRxCnt >= 99) {
-//            AboveRxCnt = 0;
-//            AboveRxstart = 0;
-//        }
+        if(AboveRxCnt < 100) {
+            rx_tmp = (uint8_t)usart_data_receive(UART4);
+        }
+        if(rx_tmp == 0x7E) {
+            ZigbeeRxstart = 1;
+            ZigbeeRxend = 0;
+            ZigbeeRxCnt = 0;            
+        }    
+        if(ZigbeeRxstart == 1) {
+            ZigbeeRxData[AboveRxCnt++] = rx_tmp;
+            if(rx_tmp == 0x7f)
+                ZigbeeRxend = 1;
+        }
+        
+        if(AboveRxCnt >= 99) {
+            ZigbeeRxCnt = 0;
+            ZigbeeRxstart = 0;
+        }
         Uart_RxTime = 0;
         usart_flag_clear(USART0, USART_FLAG_RBNE);
     }       
 
-    if((RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_TC))||(UART1_TX_Sts == SET)){
-        UART1_TX_Sts = RESET;
-        usart_flag_clear(USART0, USART_FLAG_TC);
-    }
+//    if((RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_TC))||(UART1_TX_Sts == SET)){
+//        UART1_TX_Sts = RESET;
+//        usart_flag_clear(USART0, USART_FLAG_TC);
+//    }
 }
 
 
@@ -202,11 +219,12 @@ void USART1_IRQHandler(void)
     if(RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_RBNE)){
         /* read one byte from the receive data register */
         rx_tmp = (uint8_t)usart_data_receive(USART1);
+        Motor_CommTime = 0;
 
         if( (rx_tmp == 0x7E)&&(AboveRxstart == 0) ) {
             AboveRxstart = 1;
             AboveRxend = 0;
-            AboveRxCnt = 0;            
+            AboveRxCnt = 0;       
         }    
         if(AboveRxstart == 1) {
             AboveRxData[AboveRxCnt++] = rx_tmp;
@@ -222,10 +240,11 @@ void USART1_IRQHandler(void)
         usart_flag_clear(USART1, USART_FLAG_RBNE);
     }       
 
-    if((RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_TC))||(UART2_TX_Sts == SET)){
-        UART2_TX_Sts = RESET;
-        usart_flag_clear(USART1, USART_FLAG_TC);
-    }
+//    if((RESET != usart_interrupt_flag_get(USART1, USART_INT_FLAG_TC))||(UART2_TX_Sts == SET)){
+//        Motor_CommTime = 0;
+//        UART2_TX_Sts = RESET;
+//        usart_flag_clear(USART1, USART_FLAG_TC);
+//    }
 }
 
 //==============================================================================
@@ -233,16 +252,18 @@ void USART1_IRQHandler(void)
 //=============================================================================
 void UART3_IRQHandler(void)
 {
+    uint8_t rx_tmp;
     if(RESET != usart_interrupt_flag_get(UART3, USART_INT_FLAG_RBNE)){
+        rx_tmp = (uint8_t)usart_data_receive(USART1);
         usart_flag_clear(UART3, USART_FLAG_RBNE);
         Uart_RxTime = 0;
     }       
-    if((SET == usart_interrupt_flag_get(UART3, USART_INT_FLAG_TC))||(UART3_TX_Sts == SET)){
-        /* write one byte to the transmit data register */
-        UART3_TX_Sts = RESET;
-        usart_interrupt_flag_clear(UART3, USART_INT_FLAG_TC);
-        usart_flag_clear(UART3, USART_FLAG_TC);
-    }
+//    if((SET == usart_interrupt_flag_get(UART3, USART_INT_FLAG_TC))||(UART3_TX_Sts == SET)){
+//        /* write one byte to the transmit data register */
+//        UART3_TX_Sts = RESET;
+//        usart_interrupt_flag_clear(UART3, USART_INT_FLAG_TC);
+//        usart_flag_clear(UART3, USART_FLAG_TC);
+//    }
 }
 
 
@@ -279,11 +300,11 @@ void UART4_IRQHandler(void)
         usart_flag_clear(UART4, USART_FLAG_RBNE);
 
     }       
-    else if((RESET != usart_interrupt_flag_get(UART4, USART_INT_FLAG_TC))||(UART4_TX_Sts == SET)){
-        /* write one byte to the transmit data register */
-        UART4_TX_Sts = RESET;
-        usart_flag_clear(UART4, USART_FLAG_TC);
-    }
+//    else if((RESET != usart_interrupt_flag_get(UART4, USART_INT_FLAG_TC))||(UART4_TX_Sts == SET)){
+//        /* write one byte to the transmit data register */
+//        UART4_TX_Sts = RESET;
+//        usart_flag_clear(UART4, USART_FLAG_TC);
+//    }
 }
 
 // BUT1 Interrupt
@@ -313,3 +334,35 @@ void EXTI5_9_IRQHandler(void) {
 //        exti_interrupt_flag_clear(EXTI_6);
 //    }
 //}
+
+/*!
+    \brief      this function handles TIMER2 interrupt request
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void TIMER2_IRQHandler(void)
+{
+    if(SET == timer_interrupt_flag_get(TIMER2, TIMER_INT_FLAG_CH0)) {
+        /* clear channel 0 interrupt bit */
+        timer_interrupt_flag_clear(TIMER2, TIMER_INT_FLAG_CH0);
+
+        if(0 == ccnumber) {
+            /* read channel 0 capture value */
+            readvalue1 = timer_channel_capture_value_register_read(TIMER2, TIMER_CH_0);
+            ccnumber = 1;
+        } else if(1 == ccnumber) {
+            /* read channel 0 capture value */
+            readvalue2 = timer_channel_capture_value_register_read(TIMER2, TIMER_CH_0);
+
+            if(readvalue2 > readvalue1) {
+                count = (readvalue2 - readvalue1);
+            } else {
+                count = ((0xFFFF - readvalue1) + readvalue2);
+            }
+
+            fre = 1000000 / count;
+            ccnumber = 0;
+        }
+    }
+}

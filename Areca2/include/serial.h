@@ -59,7 +59,7 @@ void InitSerialDriver(void);
 void InitSerilInterrupt(void);
 //void SetRS485Mode(tChannelType channel, tModeType mode);
 int SerialRead(uint8_t channel, unsigned char *pData, unsigned int dataLen);
-int SerialWrite(uint8_t channel, unsigned char *pData, unsigned int dataLen);
+int SerialWrite(uint8_t channel, uint8_t *pData, uint16_t dataLen);
 
 uint16_t CRC16Checksum (unsigned char * d, int size);
 

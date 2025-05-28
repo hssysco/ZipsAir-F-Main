@@ -99,48 +99,9 @@ uint8_t ThermoRxCnt = 0;
 
 extern void delay_1ms(uint32_t count);
 
-//static void SendData(int channel, unsigned char *pData, unsigned int DataLen)
-//{
-//	SerialWrite(channel, pData, DataLen);
-//	return;
-//}
 
 static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 {
-//	unsigned char packet_size = 0, read_data = 0;
-//	unsigned short checksum = 0, checksumC = 0;
-//
-//	if((pData == NULL) || (pDataLen == NULL))
-//	{
-//		return -1;
-//	}
-//
-//    Uart_RxTime = 0;
-//    while(ThermoRxend == 0) {
-//        if(Uart_RxTime >= 300) {
-//            return -1;
-//        }
-//    }    
-//    packet_size = pData[2];
-//    packet_size += 6;
-//    read_data = pData[2];
-//    read_data += 3;
-//
-//
-//
-//	checksum = CRC16Checksum(pData, read_data);
-//	checksumC = pData[packet_size-2];
-//	checksumC <<= 8;
-//	checksumC = checksumC + pData[packet_size-3];
-//
-//    if(checksum != checksumC) { 
-//        return -1;
-//    }
-//
-//
-//	*pDataLen = ThermoRxCnt;
-//
-//	return 0;
     unsigned char packet_size = 0, read_data = 0;
 	unsigned short checksum = 0, checksumC = 0;
     packet_size = pData[2];
@@ -173,18 +134,15 @@ static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 
 }
 
-static char skipStaticData = false;
 char StrBuf[MAX_SERIAL_STR_LEN];
-
 
 
 void Thermostat_Tx(uint8_t revPktId)
 {
 	int idx = 0;
-	uint8_t NumofItems = 0, packetLen = 0, i;
+	uint8_t NumofItems = 0, packetLen = 0;
 
 	uint16_t chksum = 0;
-	static uint8_t needToSync = false;
 	uint8_t Packet[MAX_PACKET_SIZE];
 
 
@@ -193,13 +151,6 @@ void Thermostat_Tx(uint8_t revPktId)
 	GetSystemInfo(&p_SystemInfo);
 	GetCommInfo(&p_CommInfo);
 	GetSensorInfo (&p_SensorInfo);
-
-
-	if(p_CommInfo->SyncWired > SYNC_WIRED_ROUND_OFF_VAL)
-	{
-		p_CommInfo->SyncWired = 0;
-		needToSync = true;
-	}
 
 	idx = 0;
 	memset(Packet, 0, sizeof(Packet));
@@ -256,14 +207,6 @@ void Thermostat_Tx(uint8_t revPktId)
     Packet[idx++] = 1;
     Packet[idx++] = p_SystemInfo->ResvTimeSet;
     
-//    NumofItems++;
-//    Packet[idx++] = ITEM_RESV_TIMER;
-//    Packet[idx++] = 4;
-//    Packet[idx++] = (p_SystemInfo->ResvTimer >> 24) & 0xFF;
-//    Packet[idx++] = (p_SystemInfo->ResvTimer >> 16) & 0xFF;
-//    Packet[idx++] = (p_SystemInfo->ResvTimer >> 8) & 0xFF;
-//    Packet[idx++] = p_SystemInfo->ResvTimer & 0xFF;
-    
     NumofItems++;
     Packet[idx++] = ITEM_ERROR;
     Packet[idx++] = 0x1;
@@ -294,197 +237,77 @@ void Thermostat_Rx() {
 	uint16_t value = 0;
    
     if(ThermoRxend == 0) {
-//        ThermoRxend = 0;
-//        ThermoRxstart = 0;
-//        ThermoRxCnt = 0;
-//        memset(ThermoRxData, 0, sizeof(ThermoRxData));
         return;
     }
-    
-//    Uart_RxTime = 0;
-//    ThermoRxend = 0;
-//
-//    
-//    ThermoRxend = 0;
-//    ThermoRxstart = 0;
+
     memcpy(pthermoRxData->Serial, ThermoRxData, ThermoRxCnt);
     
     revLen = ThermoRxCnt;
 	ret = ReceiveData(ThermoRxData, &revLen);
 	if(ret == 0 && revLen > 0)
 	{
-//		disconnect_cnt = 0;
 		p_SystemInfo->ConnType |= DEV_CONNECTION_RS485;
 
 		revPktId = ThermoRxData[1];
-//		if(needToSync)
-//		{
-//			if(revPktId > 2)
-//			{
-//				return -1;
-//			}
-//			needToSync = false;
-//		}
-//
-//		if(revPktId == 0)
-//		{
-//			revPktId = 2;
-//			p_CommInfo->SyncWired = 1;
-		}
+	}
 
-		NumofItems = ThermoRxData[3];
-		pItem = &(ThermoRxData[4]);
+    NumofItems = ThermoRxData[3];
+    pItem = &(ThermoRxData[4]);
 
-		for(i=0; i<NumofItems; i++)
-		{
-			switch(pItem[0])
-			{
-				case ITEM_SERIAL1:
-					for(int j=0; j<pItem[1]; j++)
-					{
-						StrBuf[j] = pItem[2 + j];
-					}
+    for(i=0; i<NumofItems; i++)
+    {
+        switch(pItem[0])
+        {
+            case ITEM_SERIAL1:
+                for(int j=0; j<pItem[1]; j++)
+                {
+                    StrBuf[j] = pItem[2 + j];
+                }
+                break;
+            case ITEM_FAN_STATE:
+                pAboveTxData->FanLevel = pItem[3];
+                pAboveTxData->Mode = pItem[5];
+                break;
+            case ITEM_RPM:
+                pAboveTxData->RPMSet = pItem[2]<<8;   
+                pAboveTxData->RPMSet |= pItem[3]; 
+                break;
+                
+            case ITEM_FILTER:
+                    pAboveTxData->FltTmrRst = pItem[2];
+                    value = (pItem[3] << 8 | pItem[4]);
+                    pAboveTxData->FltTmr = value;
+                    value = (pItem[5] << 8 | pItem[6]);
 
-//					if(strncmp(StrBuf, p_PersistDataInfo->Serial, MAX_SERIAL_STR_LEN) == 0)
-//					{
-						skipStaticData = true;
-//					}
-					break;
-				case ITEM_FAN_STATE:
-//					if(skipStaticData && revPktId > p_CommInfo->SyncWired)
-//					{
-//						if(pAboveRxData->Err & OPENED_COVER_ERR)
-//						{
-//							if(pAboveTxData->Mode != OP_MODE_OFF)
-//								FocedOffMode();
-//						}
-//						else
-//						{
-//							pAboveTxData->Power = pItem[2];
-							pAboveTxData->FanLevel = pItem[3];
-							pAboveTxData->Mode = pItem[5];
-//						}
-//					}
-					break;
-				case ITEM_RPM:
-                    pAboveTxData->RPMSet = pItem[2]<<8;   
-                    pAboveTxData->RPMSet |= pItem[3]; 
-					break;
-                    
-				case ITEM_FILTER:
-//					if(revPktId > p_CommInfo->SyncWired)
-//					{
-						pAboveTxData->FltTmrRst = pItem[2];
-						value = (pItem[3] << 8 | pItem[4]);
-                        pAboveTxData->FltTmr = value;
-                        value = (pItem[5] << 8 | pItem[6]);
-//						if(value && p_PersistDataInfo->fltdifprslmt != value && value <= MAX_FILTER_USE_TIME)
-//						{
-							pAboveTxData->FltTmrLmt = value;
-//							p_PersistDataInfo->fltdifprslmt = pAboveTxData->FltTmrLmt;
-//							SetValueU32(PROP_NAME_SYS_FAU_FLTPRSLMT, p_PersistDataInfo->fltdifprslmt);
-//						}
-//					}
-					break;
-				case ITEM_VSP1:
-					pAboveTxData->VSP[0] = pItem[2];
-					pAboveTxData->VSP[1] = pItem[3];
-					pAboveTxData->VSP[2] = pItem[4];
-					pAboveTxData->VSP[3] = pItem[5];
-					pAboveTxData->VSP[4] = pItem[6];
-					pAboveTxData->VSPOffset = pItem[7];
-					break;
-//				case ITEM_LED_STATUS:
-//					pAboveTxData->Led = pItem[2] << 8 | pItem[3];
-//					break;
-//				case ITEM_SENSOR_TEMP:
-//					p_SensorInfo->temp = (pItem[2] << 8 | pItem[3]) / 10;
-//					break;
-//				case ITEM_SENSOR_PM1_0:
-//					if(pItem[2] & 0x80) p_SensorInfo->selected_pm = PM_1_0;
-//					p_SensorInfo->pm1_0 = ((pItem[2] & 0x7F) << 8) | pItem[3];
-//					break;
-//				case ITEM_SENSOR_PM2_5:
-//					if(pItem[2] & 0x80) p_SensorInfo->selected_pm = PM_2_5;
-//					p_SensorInfo->pm2_5 = ((pItem[2] & 0x7F) << 8) | pItem[3];
-//					break;
-//				case ITEM_SENSOR_PM10_0:
-//					if(pItem[2] & 0x80) p_SensorInfo->selected_pm = PM_10_0;
-//					p_SensorInfo->pm10_0 = ((pItem[2] & 0x7F) << 8) | pItem[3];
-//					break;
-//				case ITEM_SENSOR_CO2:
-//					p_SensorInfo->co2 = pItem[2] << 8 | pItem[3];
-//					break;
-//				case ITEM_SENSOR_HUMIDITY:
-//					p_SensorInfo->humidity = pItem[2] << 8 | pItem[3];
-//					break;
-//				case ITEM_SENSOR_SMELL:
-//					p_SensorInfo->smell_iaq = pItem[2] << 8 | pItem[3];
-//					break;
-//				case ITEM_SENSOR_GAS:
-//					p_SensorInfo->gas = (pItem[2] << 8 | pItem[3]) / 10;
-//					break;
-				case ITEM_DIFF_PRESSURE:
-					p_SensorInfo->pressure = pItem[2];
-                    p_SensorInfo->pressure_limit = pItem[3];                    
-					break;
-				case ITEM_TIMER:
-//					if(revPktId > p_CommInfo->SyncWired)
-//					{
-//						value = pItem[2] << 24 | pItem[3] << 16 | pItem[4] << 8 | pItem[5];
-                        value = pItem[2] << 8 | pItem[3];
-                        p_SystemInfo->ResvTimer = value;
-//						if(value > 0)
-//						{
-//							if(p_SystemInfo->ResvStatus)
-//							{
-//								p_SystemInfo->ResvTimer = value;
-//								//printf("resv uptadte, timer : %d\n", p_SystemInfo->ResvTimer);
-//							}
-//							else
-//							{
-//								p_SystemInfo->ResvTimer = value;
-//								p_SystemInfo->ResvTime = (p_SystemInfo->ResvTimer/3600) + 1;
-//								EnableFauResvTime(p_SystemInfo->ResvTime);
-//								p_SystemInfo->ResvTimer = value;
-//								p_SystemInfo->ResvStatus = 1;
-//								//printf("resv on, timer : %d\n", p_SystemInfo->ResvTimer);
-//							}
-//						}
-//						else
-//						{
-//							if(p_SystemInfo->ResvStatus)
-//							{
-//								DisableFauResvTime(p_SystemInfo->ResvTimerInstance);
-//								p_SystemInfo->ResvTime = 0;
-//								p_SystemInfo->ResvTimer = 0;
-//								p_SystemInfo->ResvTimerInstance = -1;
-//								p_SystemInfo->ResvStatus = 0;
-//								//printf("resv off\n");
-//							}
-//						}
-						/* Only last sync item should update current sync for traverse upper item */
-						p_CommInfo->SyncWired = revPktId;
-//					}
-					break;
-                case ITEM_ERROR:
- 					break;
-                   
-			}
-			pItem = pItem + (pItem[1]+2);
-		}
-//	}
-//	else
-//	{
-//		disconnect_cnt++;
-//		if(disconnect_cnt >= DEV_DISCONNECT_CNT)
-//		{
-//			p_SystemInfo->ConnType &= ~DEV_CONNECTION_RS485;
-//			disconnect_cnt = 0;
-//		}
-//		skipStaticData = false;
-//	}
-    
+                    pAboveTxData->FltTmrLmt = value;
+                break;
+            case ITEM_VSP1:
+                pAboveTxData->VSP[0] = pItem[2];
+                pAboveTxData->VSP[1] = pItem[3];
+                pAboveTxData->VSP[2] = pItem[4];
+                pAboveTxData->VSP[3] = pItem[5];
+                pAboveTxData->VSP[4] = pItem[6];
+                pAboveTxData->VSPOffset = pItem[7];
+                break;
+            case ITEM_DIFF_PRESSURE:
+                p_SensorInfo->pressure = pItem[2];
+                p_SensorInfo->pressure_limit = pItem[3];                    
+                break;
+            case ITEM_TIMER:
+                value = pItem[2] << 8 | pItem[3];
+                p_SystemInfo->ResvTimer = value;
+
+                /* Only last sync item should update current sync for traverse upper item */
+                p_CommInfo->SyncWired = revPktId;
+
+                break;
+            case ITEM_ERROR:
+                break;
+               
+        }
+        pItem = pItem + (pItem[1]+2);
+    }
+
     ThermoRxend = 0;
     ThermoRxstart = 0;
     ThermoRxCnt = 0;
@@ -493,11 +316,6 @@ void Thermostat_Rx() {
     Thermostat_Tx(revPktId);
 }
 
-///------------------------------------------------------
-void ThermostatCommTask()
-{
-    CommandToThermostat();
-}
 
 void InitThermostatComms(void)
 {

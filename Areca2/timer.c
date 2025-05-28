@@ -49,25 +49,26 @@ int GetAvailableInstance(void)
 int CreateTimer( char *pTimerName, char periodicflag, uint64_t period_us, void *pFunction ) 
 {
 
-	int instance = 0, dataLen = 0;
-//	esp_err_t err = 0;
-//	esp_timer_create_args_t timer_args; 
-//	esp_timer_handle_t timerHandle = NULL;
-
-	if((pTimerName == NULL) || (pFunction == NULL)) 
-	{
-		//printf("%s:%d Invalid parameter\n", __FUNCTION__, __LINE__);
-		return -1;
-	}
-
-	instance = GetAvailableInstance();
-	if(instance < 0) 
-	{
-		//printf("%s:%d No valid timer exists\n", __FUNCTION__, __LINE__);
-		return -2;
-	}
-
-	TimerConfig[instance].instance = instance;
+	int instance = 0;
+//    int dataLen = 0;
+////	esp_err_t err = 0;
+////	esp_timer_create_args_t timer_args; 
+////	esp_timer_handle_t timerHandle = NULL;
+//
+//	if((pTimerName == NULL) || (pFunction == NULL)) 
+//	{
+//		//printf("%s:%d Invalid parameter\n", __FUNCTION__, __LINE__);
+//		return -1;
+//	}
+//
+//	instance = GetAvailableInstance();
+//	if(instance < 0) 
+//	{
+//		//printf("%s:%d No valid timer exists\n", __FUNCTION__, __LINE__);
+//		return -2;
+//	}
+//
+//	TimerConfig[instance].instance = instance;
 
 //	memset(&timer_args,0,sizeof(esp_timer_create_args_t));	
 //	timer_args.callback = pFunction;

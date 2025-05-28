@@ -1,16 +1,6 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
-//#include <freertos/FreeRTOS.h>
-//#include <freertos/task.h>
-//#include <freertos/event_groups.h>
-//#include <freertos/queue.h>
-//#include <freertos/semphr.h>
-//#include <esp_system.h>
-//#include <esp_event.h>
-//#include <esp_log.h>
-//#include <esp_sleep.h>
-//#include <esp_err.h>
 
 #include "app.h"
 
@@ -77,16 +67,7 @@ extern void delay_1ms(uint32_t count);
 
     
 extern void delay_1ms(uint32_t count);
-//static void SendData(unsigned char *pData, unsigned int DataLen)
-//{
-//	SerialWrite(AVOVE, pData, DataLen);
-//	return;
-//}
-static void SendData(int channel, unsigned char *pData, unsigned int DataLen)
-{
-	SerialWrite(channel, pData, DataLen);
-	return;
-}
+
 
 static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 {
@@ -117,22 +98,16 @@ static int ReceiveData(unsigned char *pData, unsigned char *pDataLen)
 	return 0;
 }
 
-uint8_t revPktId = 0;
-uint8_t Packet[FAU_RX_PACKET_SIZE];
-int CommandToAbov() 
+void Abov_Tx() 
 {
+    uint8_t Packet[FAU_RX_PACKET_SIZE];
 
-	int ret = 0, idx = 0, readsize = 0;
-	uint8_t PktLen = 0, NumofItems = 0, revLen = 0,  i = 0;
-	static unsigned char PktId;
+	int idx = 0, readsize = 0;
+    uint8_t revPktId = 0;
+	uint8_t PktLen = 0, NumofItems = 0;
+	uint8_t PktId;
 	
-	unsigned short chksum = 0;
-	unsigned char *pItem = NULL;
-
-//	if((pTxData == NULL)||(pRxData == NULL))
-//	{
-//		return -1;
-//	}
+	uint16_t chksum = 0;
 
 	idx = 0;
 	readsize = 0;
@@ -148,13 +123,7 @@ int CommandToAbov()
 	Packet[idx++] = PktLen;
 	Packet[idx++] = NumofItems;
     
-//    NumofItems++;
-//    Packet[idx++] = 0x03;                   // Item Version
-//    Packet[idx++] = 0x02;                   // Item length
-//    Packet[idx++] = 0x0D;                    // 'a' : Main SW, 't' : test version
-//    Packet[idx++] = 0x0D;                   // Version 1.3
 
-    
     NumofItems++;
 	Packet[idx++] = ITEM_FAN_STATE;         /* item type: Fan State */
 	Packet[idx++] = FAU_LEN_FAN_STATE;      /* item length */
@@ -162,18 +131,7 @@ int CommandToAbov()
 	Packet[idx++] = pAboveTxData->FanLevel;		/* fau level */
 	Packet[idx++] = pAboveTxData->Mode;		/* fau level */
 
-//	if(pAboveTxData->Mode == OP_MODE_AUTO)
-//	{
-//		Packet[idx++] = 1;
-//	}
-////	else if(pAboveTxData->Mode == OP_MODE_NORMAL)
-////	{
-////		Packet[idx++] = 4;
-////	}		
-//	else 
-//	{
-//		Packet[idx++] = 0;
-//	}
+
     NumofItems++;
 	Packet[idx++] = ITEM_RPM;           /* item type: RPM */
 	Packet[idx++] = FAU_LEN_RPM;        /* Item length*/
@@ -186,11 +144,6 @@ int CommandToAbov()
  	Packet[idx++] = 0;               /* PPS High*/
 	Packet[idx++] = 0;               /* PPS Low*/
     
-//  NumofItems++;
-//	Packet[idx++] = ITEM_TIMER;         /* item type: TIMER */
-//	Packet[idx++] = FAU_LEN_TIMER;      /* item type: TIMER */
-// 	Packet[idx++] = 0x00;               /* TIMER High*/
-//	Packet[idx++] = 0x01;               /* TIMER Low*/
 
     /* item type: Filter */
     NumofItems++;
@@ -214,13 +167,6 @@ int CommandToAbov()
 		Packet[idx++] = pAboveTxData->VSP[3];    /* vsp4 */
 		Packet[idx++] = pAboveTxData->VSP[4];    /* vsp5 */
         Packet[idx++] = pAboveTxData->VSPOffset;     /* VSPOffset */
-        
-//		Packet[idx++] = 0x2d; /* vsp2 */
-//		Packet[idx++] = 0x2e; /* vsp3 */
-//		Packet[idx++] = 0x30; /* vsp4 */
-//		Packet[idx++] = 0x36; /* vsp5 */
-//		Packet[idx++] = 0x3e; /* vsp5 */
-//		Packet[idx++] = 0; // offset
 	}
     
     
@@ -238,11 +184,6 @@ int CommandToAbov()
  	Packet[idx++] = ITEM_ERROR; 
 	Packet[idx++] = FAU_LEN_ERR;    /* item length */
  	Packet[idx++] = 0;              /* bit0-Motor, bit1-Door, 2-Filter */
-  
-// 	Packet[idx++] = ITEM_TEST_MODE; 
-// 	Packet[idx++] = FAU_LEN_TETSMOD; 
-//  	Packet[idx++] = 0; 
-// 	Packet[idx++] = 0; 
           
 	readsize = idx;
     Packet[2] = idx - 3;    //  packet length
@@ -255,16 +196,17 @@ int CommandToAbov()
 
     gpio_bit_set(GPIOA, GPIO_PIN_1);
     delay_1ms(2);
-	SendData(1, Packet, idx); // motor
+    SerialWrite(1, &Packet[0], idx);
     delay_1ms(2);
     gpio_bit_reset(GPIOA, GPIO_PIN_1);
+}
 
-//	SendData(AVOVE, Packet, idx);
-//	SendData(0, Packet, idx); // Zigbee
-//	SendData(1, Packet, idx); // motor
-//	SendData(2, Packet, idx); // sensor
-//	SendData(3, Packet, idx); // Thermo
-    
+int Abov_Rx() {
+    int ret = 0;
+    uint8_t NumofItems = 0, revLen = 0,  i = 0;
+	uint8_t *pItem = NULL;
+
+
 	memset(AboveRxData, 0, sizeof(AboveRxData));
     
     AboveRxend = 0;
@@ -285,8 +227,6 @@ int CommandToAbov()
 	ret = ReceiveData(AboveRxData, &revLen);
 	if((ret == 0)&&(revLen > 0)) 
 	{
-		revPktId = AboveRxData[1];
-		PktLen = AboveRxData[2];
 		NumofItems = AboveRxData[3];
 		pItem = &(AboveRxData[4]);
 
@@ -294,20 +234,7 @@ int CommandToAbov()
 		{
 			switch(pItem[0]) 
 			{
-//			case ITEM_SERIAL1:
-//				if(pItem[1] == FAU_LEN_SR) 
-//				{
-//					//ABOV data processing
-//					memset(pAboveRxData->Serial, '\0', ABOV_SERIAL_LENGTH);
-//					strcpy(pAboveRxData->Serial, "9876543210");
-//					for(index = 0; index < FAU_LEN_SR; index++) 
-//					{
-//						pAboveRxData->Serial[index] = pItem[2+index];
-//					}
-//				}
-//				break;
-//				
-			case ITEM_SW_VERSION: /* item type: version */
+            case ITEM_SW_VERSION: /* item type: version */
 				if(pAboveRxData->VerH != pItem[2]) 
 					{
 					pAboveRxData->VerH = pItem[2];
@@ -319,26 +246,22 @@ int CommandToAbov()
 				break;
 
 			case ITEM_FAN_STATE:
-//				if (revPktId > PktId) 
-//				{
-                    if(pItem[2] > 0)
-                        pAboveRxData->Power = 1;
-                    else 
-                        pAboveRxData->Power = 0;
-                        
-					pAboveRxData->FanLevel = pItem[2];
-					pAboveRxData->ErvLevel = 0;
+                if(pItem[2] > 0)
+                    pAboveRxData->Power = 1;
+                else 
+                    pAboveRxData->Power = 0;
+                    
+                pAboveRxData->FanLevel = pItem[2];
+                pAboveRxData->ErvLevel = 0;
 
-					if(pItem[3] == 0) 
-					{
-						pAboveRxData->Mode = OP_MODE_OFF;
-					}					
-					else 
-					{ 
-						pAboveRxData->Mode = OP_MODE_AUTO;
-					}
-
-//				}
+                if(pItem[3] == 0) 
+                {
+                    pAboveRxData->Mode = OP_MODE_OFF;
+                }					
+                else 
+                { 
+                    pAboveRxData->Mode = OP_MODE_AUTO;
+                }
 				break;
 				
 			case ITEM_RPM:
@@ -375,20 +298,13 @@ int CommandToAbov()
 			}
 		
 			pItem = pItem + (pItem[1]+2);
-		}
-
-		PktId = revPktId;
-		
+		}	
 	}
 	
 	return ret;
 }
 
-///------------------------------------------------------
-void AbovCommTask() 
-{
-    CommandToAbov();
-}
+
 
 void InitAbovComms(void) 
 {

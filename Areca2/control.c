@@ -522,312 +522,312 @@ void AnalysisTaskInit()
 ///------------------------------------------------------
 void AnalysisTask() 
 {
-	int PmValue = 0, PMLevel = 0;
-	int OldLed = 0, Led = 0, Tmp = 0, OldTmp = 0;
-	OpModeT FauMode = OP_MODE_OFF;
-
-	unsigned char FauLevel = 0;
-	unsigned char index = 0;
-
+//	int PmValue = 0, PMLevel = 0;
+//	int OldLed = 0, Led = 0, Tmp = 0, OldTmp = 0;
+//	OpModeT FauMode = OP_MODE_OFF;
 //
-//	GetAbovTxInfo(&pTxData);
-//	GetAbovRxInfo(&pRxData);
-//	GetSystemInfo(&pSystemInfo);
+//	unsigned char FauLevel = 0;
+//	unsigned char index = 0;
 //
-//	GetSensorInfo (&pSensorInfo);
-//	GetPersistDataInfo (&pPersistDataInfo);
-
-//	while(1)
-//	{
-//		if((pSensorInfo == NULL) || (pPersistDataInfo == NULL)|| (pTxData == NULL) || (pRxData == NULL))
+////
+////	GetAbovTxInfo(&pTxData);
+////	GetAbovRxInfo(&pRxData);
+////	GetSystemInfo(&pSystemInfo);
+////
+////	GetSensorInfo (&pSensorInfo);
+////	GetPersistDataInfo (&pPersistDataInfo);
+//
+////	while(1)
+////	{
+////		if((pSensorInfo == NULL) || (pPersistDataInfo == NULL)|| (pTxData == NULL) || (pRxData == NULL))
+////		{
+//////			vTaskDelay(100); /* 1s */
+//////			continue;
+////            return;
+////		}
+//
+//		if(pSystemInfo->ConnType == DEV_CONNECTION_NONE)
 //		{
+//			OffAllLed();
+//			FocedOffMode();
 ////			vTaskDelay(100); /* 1s */
 ////			continue;
 //            return;
 //		}
-
-		if(pSystemInfo->ConnType == DEV_CONNECTION_NONE)
-		{
-			OffAllLed();
-			FocedOffMode();
-//			vTaskDelay(100); /* 1s */
-//			continue;
-            return;
-		}
-
-		if(pTxData->Led == 0)
-		{
-			FauMode = pTxData->Mode;
-			FauLevel = pTxData->FanLevel;
-
-			switch(pSensorInfo->selected_pm)
-			{
-				case PM_1_0: PmValue = pSensorInfo->pm1_0; break;
-				case PM_10_0: PmValue = pSensorInfo->pm10_0; break;
-				default: PmValue = pSensorInfo->pm2_5; break;
-			}
-
-			if(pSensorInfo->selected_pm == PM_10_0)
-			{
-				if (PmValue>=0 && PmValue<=30) PMLevel = 0;
-				else if (PmValue>30 && PmValue<=80) PMLevel = 1;
-				else if (PmValue>80 && PmValue<=150) PMLevel = 2;
-				else if (PmValue < 0) PMLevel = 0;
-				else PMLevel = 3;
-			}
-			else
-			{
-				if (PmValue>=0 && PmValue<=15) PMLevel = 0;
-				else if (PmValue>15 && PmValue<=35) PMLevel = 1;
-				else if (PmValue>35 && PmValue<=75) PMLevel = 2;
-				else if (PmValue < 0) PMLevel = 0;
-				else PMLevel = 3;
-			}
-
-			if(FauMode > OP_MODE_OFF && FauLevel != FAN_LEVEL_SLEEP)
-			{
-				if(PMLevel == 0)
-				{
-					OnLed(LED_DUST_BLUE);
-				}
-				else if(PMLevel == 1)
-				{
-					OnLed(LED_DUST_GREEN);
-				}
-				else if(PMLevel == 2)
-				{
-					OnLed(LED_DUST_DGREEN);
-				}
-				else if(PMLevel == 3)
-				{
-					OnLed(LED_DUST_RED);
-				}
-			}
-
-			if(FauMode == OP_MODE_OFF)
-			{
-				OffAllLed();
-			}
-			else if(FauMode == OP_MODE_AUTO)
-			{
-				OnLed(LED_POWER);
-				OnLed(LED_FAN);
-				OffLed(LED_SLEEP);
-				OffLed(LED_FAN_LOW);
-				OffLed(LED_FAN_MID);
-				OffLed(LED_FAN_HIGH);
-				OffLed(LED_FAN_TURBO);
-				if(pRxData->FltTmr >= pRxData->FltTmrLmt)
-				{
-					OnLed(LED_FILTER_ERR);
-				}
-				else
-				{
-					OffLed(LED_FILTER_ERR);
-				}
-			}
-			else if(FauMode == OP_MODE_NORMAL)
-			{
-				if(FauLevel == FAN_LEVEL_SLEEP)
-				{
-					OnLed(LED_SLEEP);
-					OffLed(LED_POWER);
-					OffLed(LED_FAN);
-					OffLed(LED_LOCK);
-					OffLed(LED_FILTER_ERR);
-					OffLed(LED_AI);
-					OffLed(LED_FAN_LOW);
-					OffLed(LED_DUST_BLUE);
-					OffLed(LED_DUST_GREEN);
-					OffLed(LED_DUST_DGREEN);
-					OffLed(LED_DUST_RED);
-				}
-				else
-				{
-					OnLed(LED_POWER);
-					OnLed(LED_FAN);
-					OffLed(LED_SLEEP);
-
-					if(pRxData->FltTmr >= pRxData->FltTmrLmt)
-					{
-						OnLed(LED_FILTER_ERR);
-					}
-					else
-					{
-						OffLed(LED_FILTER_ERR);
-					}
-
-					switch(FauLevel)
-					{
-					case FAN_LEVEL_LOW:
-						OnLed(LED_FAN_LOW);
-						break;
-					case FAN_LEVEL_MIDDLE:
-						OnLed(LED_FAN_MID);
-						break;
-					case FAN_LEVEL_HIGH:
-						OnLed(LED_FAN_HIGH);
-						break;
-					case FAN_LEVEL_TURBO:
-					case FAN_LEVEL_MAX:
-						OnLed(LED_FAN_TURBO);
-						break;
-					case FAN_LEVEL_OFF:
-					default:
-						OffLed(LED_FAN_LOW);
-						break;
-					}
-				}
-			}
-			else
-			{
-				//printf("Unrecoginized mode %d\n", FauMode);
-			}
-		}
-		else
-		{
-			Led = pTxData->Led;
-
-			if(OldLed != Led)
-			{
-				if(Led == 0xBFFF)
-				{
-					OnAllLed();
-				}
-				else if(Led == 0x8000)
-				{
-					OffAllLed();
-				}
-				else if(Led == 0x4000)
-				{
-                    software_reset();
-				}
-				else
-				{
-					Tmp = Led;
-					OldTmp = OldLed;
-
-					Tmp &=0x000F;
-					OldTmp &=0x000F;
-					
-					if(OldTmp != Tmp)
-					{
-						if(OldTmp == 0x0008)
-						{
-							OffLed(LED_DUST_RED);
-						}
-						else if(OldTmp == 0x0004)
-						{
-							OffLed(LED_DUST_DGREEN);
-						}
-						else if(OldTmp == 0x0002)
-						{
-							OffLed(LED_DUST_GREEN);
-						}
-						else if(OldTmp == 0x0001)
-						{
-							OffLed(LED_DUST_BLUE);
-						}
-
-						if(Tmp == 0x0008)
-						{
-							OnLed(LED_DUST_RED);
-						}
-						else if(Tmp == 0x0004)
-						{
-							OnLed(LED_DUST_DGREEN);
-						}
-						else if(Tmp == 0x0002)
-						{
-							OnLed(LED_DUST_GREEN);
-						}
-						else if(Tmp == 0x0001)
-						{
-							OnLed(LED_DUST_BLUE);
-						}
-					}
-
-					Tmp = Led;
-					OldTmp = OldLed;
-
-					Tmp &=0x03F0;
-					Tmp >>= 4; 
-					OldTmp &=0x03F0;
-					OldTmp >>= 4;
-					if(OldTmp != Tmp)
-					{
-						for(index = 0; index < 6; index++)
-						{
-							if(Tmp&(0x0001<<index))
-							{
-								OnLed(LED_POWER + index);
-							}
-							else
-							{
-								OffLed(LED_POWER + index);
-							}
-						}
-					}					
-
-					Tmp = Led;
-					OldTmp = OldLed;
-					
-					Tmp &=0x3C00;
-					Tmp >>= 10; 
-					OldTmp &=0x3C00;
-					OldTmp >>= 10;
-
-					if(OldTmp != Tmp)
-					{
-						if(OldTmp == 0x0008)
-						{
-							OffLed(LED_FAN_TURBO);
-						
-						}
-						else if(OldTmp == 0x0004)
-						{
-							OffLed(LED_FAN_HIGH);
-						
-						}
-						else if(OldTmp == 0x0002)
-						{
-							OffLed(LED_FAN_MID);
-						
-						}
-						else if(OldTmp == 0x0001)
-						{
-							OffLed(LED_FAN_LOW);							
-						}
-						
-						if(Tmp == 0x0008)
-						{
-							OnLed(LED_FAN_TURBO);
-						}
-						else if(Tmp == 0x0004)
-						{
-							OnLed(LED_FAN_HIGH);
-						
-						}
-						else if(Tmp == 0x0002)
-						{
-							OnLed(LED_FAN_MID);
-						
-						}
-						else if(Tmp == 0x0001)
-						{
-							OnLed(LED_FAN_LOW); 						
-						}
-					
-					}
-					
-				}
-
-				OldLed = Led;
-			}
-		}
-
-//		vTaskDelay(50); /* 500ms */
-//	}
+//
+//		if(pTxData->Led == 0)
+//		{
+//			FauMode = pTxData->Mode;
+//			FauLevel = pTxData->FanLevel;
+//
+//			switch(pSensorInfo->selected_pm)
+//			{
+//				case PM_1_0: PmValue = pSensorInfo->pm1_0; break;
+//				case PM_10_0: PmValue = pSensorInfo->pm10_0; break;
+//				default: PmValue = pSensorInfo->pm2_5; break;
+//			}
+//
+//			if(pSensorInfo->selected_pm == PM_10_0)
+//			{
+//				if (PmValue>=0 && PmValue<=30) PMLevel = 0;
+//				else if (PmValue>30 && PmValue<=80) PMLevel = 1;
+//				else if (PmValue>80 && PmValue<=150) PMLevel = 2;
+//				else if (PmValue < 0) PMLevel = 0;
+//				else PMLevel = 3;
+//			}
+//			else
+//			{
+//				if (PmValue>=0 && PmValue<=15) PMLevel = 0;
+//				else if (PmValue>15 && PmValue<=35) PMLevel = 1;
+//				else if (PmValue>35 && PmValue<=75) PMLevel = 2;
+//				else if (PmValue < 0) PMLevel = 0;
+//				else PMLevel = 3;
+//			}
+//
+//			if(FauMode > OP_MODE_OFF && FauLevel != FAN_LEVEL_SLEEP)
+//			{
+//				if(PMLevel == 0)
+//				{
+//					OnLed(LED_DUST_BLUE);
+//				}
+//				else if(PMLevel == 1)
+//				{
+//					OnLed(LED_DUST_GREEN);
+//				}
+//				else if(PMLevel == 2)
+//				{
+//					OnLed(LED_DUST_DGREEN);
+//				}
+//				else if(PMLevel == 3)
+//				{
+//					OnLed(LED_DUST_RED);
+//				}
+//			}
+//
+//			if(FauMode == OP_MODE_OFF)
+//			{
+//				OffAllLed();
+//			}
+//			else if(FauMode == OP_MODE_AUTO)
+//			{
+//				OnLed(LED_POWER);
+//				OnLed(LED_FAN);
+//				OffLed(LED_SLEEP);
+//				OffLed(LED_FAN_LOW);
+//				OffLed(LED_FAN_MID);
+//				OffLed(LED_FAN_HIGH);
+//				OffLed(LED_FAN_TURBO);
+//				if(pRxData->FltTmr >= pRxData->FltTmrLmt)
+//				{
+//					OnLed(LED_FILTER_ERR);
+//				}
+//				else
+//				{
+//					OffLed(LED_FILTER_ERR);
+//				}
+//			}
+//			else if(FauMode == OP_MODE_NORMAL)
+//			{
+//				if(FauLevel == FAN_LEVEL_SLEEP)
+//				{
+//					OnLed(LED_SLEEP);
+//					OffLed(LED_POWER);
+//					OffLed(LED_FAN);
+//					OffLed(LED_LOCK);
+//					OffLed(LED_FILTER_ERR);
+//					OffLed(LED_AI);
+//					OffLed(LED_FAN_LOW);
+//					OffLed(LED_DUST_BLUE);
+//					OffLed(LED_DUST_GREEN);
+//					OffLed(LED_DUST_DGREEN);
+//					OffLed(LED_DUST_RED);
+//				}
+//				else
+//				{
+//					OnLed(LED_POWER);
+//					OnLed(LED_FAN);
+//					OffLed(LED_SLEEP);
+//
+//					if(pRxData->FltTmr >= pRxData->FltTmrLmt)
+//					{
+//						OnLed(LED_FILTER_ERR);
+//					}
+//					else
+//					{
+//						OffLed(LED_FILTER_ERR);
+//					}
+//
+//					switch(FauLevel)
+//					{
+//					case FAN_LEVEL_LOW:
+//						OnLed(LED_FAN_LOW);
+//						break;
+//					case FAN_LEVEL_MIDDLE:
+//						OnLed(LED_FAN_MID);
+//						break;
+//					case FAN_LEVEL_HIGH:
+//						OnLed(LED_FAN_HIGH);
+//						break;
+//					case FAN_LEVEL_TURBO:
+//					case FAN_LEVEL_MAX:
+//						OnLed(LED_FAN_TURBO);
+//						break;
+//					case FAN_LEVEL_OFF:
+//					default:
+//						OffLed(LED_FAN_LOW);
+//						break;
+//					}
+//				}
+//			}
+//			else
+//			{
+//				//printf("Unrecoginized mode %d\n", FauMode);
+//			}
+//		}
+//		else
+//		{
+//			Led = pTxData->Led;
+//
+//			if(OldLed != Led)
+//			{
+//				if(Led == 0xBFFF)
+//				{
+//					OnAllLed();
+//				}
+//				else if(Led == 0x8000)
+//				{
+//					OffAllLed();
+//				}
+//				else if(Led == 0x4000)
+//				{
+//                    software_reset();
+//				}
+//				else
+//				{
+//					Tmp = Led;
+//					OldTmp = OldLed;
+//
+//					Tmp &=0x000F;
+//					OldTmp &=0x000F;
+//					
+//					if(OldTmp != Tmp)
+//					{
+//						if(OldTmp == 0x0008)
+//						{
+//							OffLed(LED_DUST_RED);
+//						}
+//						else if(OldTmp == 0x0004)
+//						{
+//							OffLed(LED_DUST_DGREEN);
+//						}
+//						else if(OldTmp == 0x0002)
+//						{
+//							OffLed(LED_DUST_GREEN);
+//						}
+//						else if(OldTmp == 0x0001)
+//						{
+//							OffLed(LED_DUST_BLUE);
+//						}
+//
+//						if(Tmp == 0x0008)
+//						{
+//							OnLed(LED_DUST_RED);
+//						}
+//						else if(Tmp == 0x0004)
+//						{
+//							OnLed(LED_DUST_DGREEN);
+//						}
+//						else if(Tmp == 0x0002)
+//						{
+//							OnLed(LED_DUST_GREEN);
+//						}
+//						else if(Tmp == 0x0001)
+//						{
+//							OnLed(LED_DUST_BLUE);
+//						}
+//					}
+//
+//					Tmp = Led;
+//					OldTmp = OldLed;
+//
+//					Tmp &=0x03F0;
+//					Tmp >>= 4; 
+//					OldTmp &=0x03F0;
+//					OldTmp >>= 4;
+//					if(OldTmp != Tmp)
+//					{
+//						for(index = 0; index < 6; index++)
+//						{
+//							if(Tmp&(0x0001<<index))
+//							{
+//								OnLed(LED_POWER + index);
+//							}
+//							else
+//							{
+//								OffLed(LED_POWER + index);
+//							}
+//						}
+//					}					
+//
+//					Tmp = Led;
+//					OldTmp = OldLed;
+//					
+//					Tmp &=0x3C00;
+//					Tmp >>= 10; 
+//					OldTmp &=0x3C00;
+//					OldTmp >>= 10;
+//
+//					if(OldTmp != Tmp)
+//					{
+//						if(OldTmp == 0x0008)
+//						{
+//							OffLed(LED_FAN_TURBO);
+//						
+//						}
+//						else if(OldTmp == 0x0004)
+//						{
+//							OffLed(LED_FAN_HIGH);
+//						
+//						}
+//						else if(OldTmp == 0x0002)
+//						{
+//							OffLed(LED_FAN_MID);
+//						
+//						}
+//						else if(OldTmp == 0x0001)
+//						{
+//							OffLed(LED_FAN_LOW);							
+//						}
+//						
+//						if(Tmp == 0x0008)
+//						{
+//							OnLed(LED_FAN_TURBO);
+//						}
+//						else if(Tmp == 0x0004)
+//						{
+//							OnLed(LED_FAN_HIGH);
+//						
+//						}
+//						else if(Tmp == 0x0002)
+//						{
+//							OnLed(LED_FAN_MID);
+//						
+//						}
+//						else if(Tmp == 0x0001)
+//						{
+//							OnLed(LED_FAN_LOW); 						
+//						}
+//					
+//					}
+//					
+//				}
+//
+//				OldLed = Led;
+//			}
+//		}
+//
+////		vTaskDelay(50); /* 500ms */
+////	}
 }
 
 #if 0
@@ -1432,22 +1432,21 @@ void InitControlFuncs(void)
 ////	xTaskCreatePinnedToCore(RmtActionTask, "Action Task", 4096, NULL, 5, NULL, 1);	
 //	xTaskCreatePinnedToCore(PIDTask, "PID Task", 4096, NULL, 5, NULL, 1);	
 
-	memset(&(PIDCtrl),0,sizeof(PIDCtrlT));
-	pPID = PID_Create(&(PIDCtrl), &Input, &Output, &SetPoint, KP, KI, KD);
-
-	GetAbovTxInfo(&pTxData);
-	GetAbovRxInfo(&pRxData);
-	GetPersistDataInfo(&pPersistDataInfo);
-
-	if((pTxData == NULL) || (pRxData == NULL) || (pPID == NULL) || (pPersistDataInfo == NULL))
-	{
-		return;
-	}
-
-	PID_Limits(pPID, -100, 100);
-
-	PID_Auto(pPID);
-	return;
+//	memset(&(PIDCtrl),0,sizeof(PIDCtrlT));
+//	pPID = PID_Create(&(PIDCtrl), &Input, &Output, &SetPoint, KP, KI, KD);
+//
+//	GetAbovTxInfo(&pTxData);
+//	GetAbovRxInfo(&pRxData);
+//	GetPersistDataInfo(&pPersistDataInfo);
+//
+//	if((pTxData == NULL) || (pRxData == NULL) || (pPID == NULL) || (pPersistDataInfo == NULL))
+//	{
+//		return;
+//	}
+//
+//	PID_Limits(pPID, -100, 100);
+//
+//	PID_Auto(pPID);
 }
 
 

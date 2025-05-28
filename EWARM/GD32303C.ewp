@@ -779,7 +779,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$TOOLKIT_DIR$\config\linker\GD\GD32F303xC.icf</state>
+                    <state>$PROJ_DIR$\GD32303C.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -2099,6 +2099,12 @@
             <name>$PROJ_DIR$\..\gd32f30x_it.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\gd32f3x0_gpio.c</name>
+            <excluded>
+                <configuration>Debug</configuration>
+            </excluded>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\main.c</name>
         </file>
         <file>
@@ -2153,7 +2159,19 @@
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\gpio_dev.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Areca2\ir_common.c</name>
+                    <excluded>
+                        <configuration>Debug</configuration>
+                    </excluded>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\led.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Areca2\rc5_decode.c</name>
+                    <excluded>
+                        <configuration>Debug</configuration>
+                    </excluded>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\remote.c</name>
@@ -2164,9 +2182,18 @@
                 <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\serial.c</name>
                 </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Areca2\sirc_decode.c</name>
+                    <excluded>
+                        <configuration>Debug</configuration>
+                    </excluded>
+                </file>
             </group>
             <group>
                 <name>pressure</name>
+                <excluded>
+                    <configuration>Debug</configuration>
+                </excluded>
                 <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\pressure\bme680.c</name>
                 </file>
@@ -2197,29 +2224,13 @@
             <name>$PROJ_DIR$\..\Areca2\control.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Areca2\factory.c</name>
-            <excluded>
-                <configuration>Release</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Areca2\mqtt.c</name>
-            <excluded>
-                <configuration>Debug</configuration>
-                <configuration>Release</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Areca2\nvs_api.c</name>
-            <excluded>
-                <configuration>Release</configuration>
-            </excluded>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Areca2\thermostat_comms.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Areca2\timer.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Areca2\ZigB.c</name>
         </file>
     </group>
     <group>

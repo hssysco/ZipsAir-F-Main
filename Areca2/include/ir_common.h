@@ -23,12 +23,12 @@
 #define __IR_COMMON_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+//#include "main.h"
 #include <stdio.h>
 #include "rc5_decode.h"
-#include "rc5_encode.h"
+//#include "rc5_encode.h"
 #include "sirc_decode.h"
-#include "sirc_encode.h"
+//#include "sirc_encode.h"
 
 /** @addtogroup IR_REMOTE
   * @brief Infra-red remote control
@@ -184,7 +184,7 @@ extern __IO StatusOperation_t RFDemoStatus;
   * @{
   */
 void SIRC_Encode_SignalGenerate(void);
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim);
+//void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim);
 uint32_t TIM_GetCounterCLKValue(void);
 void TIM_ForcedOC1Config(uint32_t action);
 

@@ -18,11 +18,13 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+//#include "main.h"
+#include "gd32f30x.h"
+#include "ir_common.h"
 
 /* Common_Private_Defines ----------------------------------------------------*/
-#define  RC5HIGHSTATE     ((uint8_t )0x02)   /* RC5 high level definition*/
-#define  RC5LOWSTATE      ((uint8_t )0x01)   /* RC5 low level definition*/
+//#define  RC5HIGHSTATE     ((uint8_t )0x02)   /* RC5 high level definition*/
+//#define  RC5LOWSTATE      ((uint8_t )0x01)   /* RC5 low level definition*/
 
 /* Common_Private_Variables --------------------------------------------------*/
 uint32_t ICValue1 = 0;
@@ -43,39 +45,39 @@ __IO StatusOperation_t RFDemoStatus;
   */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-  if (RFDemoStatus == RC5_DEC)
-  {
-    /* - Timer Falling Edge Event:
-    The Timer interrupt is used to measure the period between two 
-    successive falling edges (The whole pulse duration).
-
-    - Timer Rising Edge Event:  
-    It is also used to measure the duration between falling and rising 
-    edges (The low pulse duration).
-    The two durations are useful to determine the bit value. Each bit is 
-    determined according to the last bit. 
-
-    Update event:InfraRed decoders time out event.
-    ---------------------------------------------
-    It resets the InfraRed decoders packet.
-    - The Timer Overflow is set to 3.6 ms .*/
-
-    /* IC2 Interrupt*/
-    if (htim->Channel == IR_TIM_DEC_CH_ACTIV_A)
-    {
-      ICValue2 = HAL_TIM_ReadCapturedValue(&TimHandleDEC, IR_TIM_DEC_CHANNEL_A);
-      /* RC5 */
-      RC5_DataSampling(ICValue2 - ICValue1 , 0);
-
-    }  /* IC1 Interrupt */
-    else if (htim->Channel == IR_TIM_DEC_CH_ACTIV_B)
-    {
-      ICValue1 =  HAL_TIM_ReadCapturedValue(&TimHandleDEC, IR_TIM_DEC_CHANNEL_B);
-      RC5_DataSampling(ICValue1 , 1);
-    }
-  }
-  else if (RFDemoStatus == SIRC_DEC)
-  {
+//  if (RFDemoStatus == RC5_DEC)
+//  {
+//    /* - Timer Falling Edge Event:
+//    The Timer interrupt is used to measure the period between two 
+//    successive falling edges (The whole pulse duration).
+//
+//    - Timer Rising Edge Event:  
+//    It is also used to measure the duration between falling and rising 
+//    edges (The low pulse duration).
+//    The two durations are useful to determine the bit value. Each bit is 
+//    determined according to the last bit. 
+//
+//    Update event:InfraRed decoders time out event.
+//    ---------------------------------------------
+//    It resets the InfraRed decoders packet.
+//    - The Timer Overflow is set to 3.6 ms .*/
+//
+//    /* IC2 Interrupt*/
+//    if (htim->Channel == IR_TIM_DEC_CH_ACTIV_A)
+//    {
+//      ICValue2 = HAL_TIM_ReadCapturedValue(&TimHandleDEC, IR_TIM_DEC_CHANNEL_A);
+//      /* RC5 */
+//      RC5_DataSampling(ICValue2 - ICValue1 , 0);
+//
+//    }  /* IC1 Interrupt */
+//    else if (htim->Channel == IR_TIM_DEC_CH_ACTIV_B)
+//    {
+//      ICValue1 =  HAL_TIM_ReadCapturedValue(&TimHandleDEC, IR_TIM_DEC_CHANNEL_B);
+//      RC5_DataSampling(ICValue1 , 1);
+//    }
+//  }
+//  else if (RFDemoStatus == SIRC_DEC)
+//  {
     /*The Timer interrupt is used to measure the different period between
     two successive falling edges in order to identify the frame bits.
 
@@ -92,19 +94,19 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     It resets the InfraRed decoders packet.    
     - The Timer Overflow is set to 4 ms.  */
 
-    /* IC2 Interrupt */
-    if (htim->Channel == IR_TIM_DEC_CH_ACTIV_A)
-    {
-      /* Get the Input Capture value */
-      ICValue2 = HAL_TIM_ReadCapturedValue(&TimHandleDEC , IR_TIM_DEC_CHANNEL_A);
-      SIRC_DataSampling(ICValue1, ICValue2);
-    }  /* IC1 Interrupt*/
-    else  if (htim->Channel == IR_TIM_DEC_CH_ACTIV_B)
-    {
-      /* Get the Input Capture value */
-      ICValue1 = HAL_TIM_ReadCapturedValue(&TimHandleDEC , IR_TIM_DEC_CHANNEL_B);
-    }
-  }
+//    /* IC2 Interrupt */
+//    if (htim->Channel == IR_TIM_DEC_CH_ACTIV_A)
+//    {
+//      /* Get the Input Capture value */
+//      ICValue2 = HAL_TIM_ReadCapturedValue(&TimHandleDEC , IR_TIM_DEC_CHANNEL_A);
+//      SIRC_DataSampling(ICValue1, ICValue2);
+//    }  /* IC1 Interrupt*/
+//    else  if (htim->Channel == IR_TIM_DEC_CH_ACTIV_B)
+//    {
+//      /* Get the Input Capture value */
+//      ICValue1 = HAL_TIM_ReadCapturedValue(&TimHandleDEC , IR_TIM_DEC_CHANNEL_B);
+//    }
+//  }
 }
 
 /**
@@ -115,27 +117,27 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* Depending */
-  if (htim == &TimHandleLF )
-  {
-    if (RFDemoStatus == (uint8_t)SIRC_ENC)
-    {
-      SIRC_Encode_SignalGenerate();
-    }
-    else if (RFDemoStatus == (uint8_t)RC5_ENC)
-    {
-      RC5_Encode_SignalGenerate();
-    }
-  }
+//  if (htim == &TimHandleLF )
+//  {
+//    if (RFDemoStatus == (uint8_t)SIRC_ENC)
+//    {
+//      SIRC_Encode_SignalGenerate();
+//    }
+//    else if (RFDemoStatus == (uint8_t)RC5_ENC)
+//    {
+//      RC5_Encode_SignalGenerate();
+//    }
+//  }
   if (htim == &TimHandleDEC )
   {
-    if (RFDemoStatus == (uint8_t)SIRC_DEC)
-    {
+//    if (RFDemoStatus == (uint8_t)SIRC_DEC)
+//    {
       SIRC_ResetPacket();
-    }
-    else if (RFDemoStatus == (uint8_t)RC5_DEC)
-    {
-      RC5_ResetPacket();
-    }
+//    }
+//    else if (RFDemoStatus == (uint8_t)RC5_DEC)
+//    {
+//      RC5_ResetPacket();
+//    }
   }
   if (htim == &TimHandleLED )
   {

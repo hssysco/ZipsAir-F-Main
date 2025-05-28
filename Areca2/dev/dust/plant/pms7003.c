@@ -116,7 +116,7 @@ cont:
 
 }
 
-void InitDust (DrvDustDevT *pDustDev) 
+void InitDust(void) 
 {
 
 	if(pDustDev == NULL) 

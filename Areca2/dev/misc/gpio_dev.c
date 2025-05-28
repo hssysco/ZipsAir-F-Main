@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include "gpio_dev.h"
 
-
 static uint32_t KEY_PORT[KEYn] = {REV0_GPIO_PORT, REV1_GPIO_PORT,
                                   REV2_GPIO_PORT, REV3_GPIO_PORT,
                                   DOOR_GPIO_PORT, BUT1_GPIO_PORT};
@@ -41,6 +40,7 @@ static uint8_t KEY_IRQn[KEYn] = {REV0_EXTI_IRQn,
                                  REV3_EXTI_IRQn,
                                  DOOR_EXTI_IRQn,
                                  BUT1_EXTI_IRQn};
+
 
 extern void CheckGpioCallback(GpioEventT event);
 
@@ -87,7 +87,7 @@ void InitCheckGpio(void)
 void gpio_check_task(void)
 {
 	FlagStatus ret = RESET;
-	uint8_t initflag = 0;
+//	uint8_t initflag = 0;
     
     ret = gd_key_state_get(KEY_DOOR);
     if(ret == SET)

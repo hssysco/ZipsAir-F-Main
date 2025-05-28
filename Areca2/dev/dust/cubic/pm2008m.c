@@ -18,29 +18,29 @@
 #define MAX_PACKET_LEN    	56
 
 
-void Pm2008Task(void* arg) 
+void Pm2008() 
 {
 	int idx = 0, rc = 0;
-	unsigned char buf[MAX_PACKET_LEN];
-	unsigned char checksum;
-	unsigned char calcurated_checksum;
+	uint8_t buf[MAX_PACKET_LEN];
+	uint8_t checksum;
+	uint8_t calcurated_checksum;
 
-	unsigned char *df = NULL;
+	uint8_t *df = NULL;
 
-	unsigned long pm_1_0;
-	unsigned long pm_2_5;
-	unsigned long pm_10_0;
+//	uint32_t pm_1_0 = 0;
+//	uint32_t pm_2_5 = 0;
+//	uint32_t pm_10_0 = 0;
 
 	DustEventT param;
 	
 	char StrBuf[256];
 	int Fd = -1;
 
-	DrvDustDevT *pDustDev = (DrvDustDevT *)arg;
-	if(pDustDev == NULL)
-	{
-		return;
-	}
+	DrvDustDevT *pDustDev = NULL;
+//	if(pDustDev == NULL)
+//	{
+//		return;
+//	}
 
 //	while(1) 
 //	{
@@ -58,7 +58,7 @@ void Pm2008Task(void* arg)
 //		rc = SerialRead(DUST, buf, MAX_PACKET_LEN);
 		if (rc <= 0) 
 		{
-			goto cont;
+			return;
 		}
 
 		checksum = buf[MAX_PACKET_LEN-1];
@@ -70,7 +70,7 @@ void Pm2008Task(void* arg)
 
 		if (checksum != calcurated_checksum)
 		{
-			goto cont;
+			return;
 		}
 
 		df = &buf[3];
@@ -99,23 +99,11 @@ void Pm2008Task(void* arg)
 		{
 			pDustDev->fnDustCallback(&param);
 		}
-
-cont:
-		//printf("## Dust %d: ScanPeriod(%ld)\n", __LINE__, pDustDev->ScanPeriod);
-//		usleep(pDustDev->ScanPeriod*1000);
-//		continue;
-//	}
-
-//	return;
-
 }
 
-void InitDust (DrvDustDevT *pDustDev) 
+void InitDust(void) 
 {
-	if(pDustDev == NULL) 
-	{
-		return;
-	}
+
     rcu_periph_clock_enable(RCU_AF);
     rcu_periph_clock_enable(SEN_GPIO_PORT);
 //    gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_4);

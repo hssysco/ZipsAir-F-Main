@@ -25,6 +25,7 @@ typedef enum
 #include "nvs_api.h"
 #include "timer.h"
 #include "abov_comms.h"
+#include "Zigbee_comms.h"
 #include "thermostat_comms.h"
 #include "pid.h"
 #include "factory.h"
@@ -247,7 +248,9 @@ typedef struct SystemInfo
 	int UpgradeMode;
 	int ConnType;
 	bool HasSensors;
-
+	bool Zigbee_OnOff;
+	bool Zigbee_Codi;
+        
 	int MqttUgMode;
 	int MqttUgSendPktCnt;
 

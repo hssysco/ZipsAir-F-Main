@@ -1,8 +1,8 @@
 "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\bin\armproc.dll" 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\bin\armstlink2.dll" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\bin\armjlink2.dll" 
 
-"D:\Project\HanSungSysco\1_Software\areca_2\backup\Areca2(20241011)\Areca2(241007)\EWARM\Debug\Exe\Project.out" 
+"D:\Project\HanSungSysco\1_Software\areca_2\Areca2(250424)\EWARM\Debug\Exe\Project.out" 
 
 --plugin="C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\arm\bin\armbat.dll" 
 

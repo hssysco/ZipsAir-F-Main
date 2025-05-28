@@ -2375,6 +2375,9 @@
             <name>$PROJ_DIR$\..\gd32f30x_it.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\gd32f3x0_gpio.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\main.c</name>
         </file>
         <file>
@@ -2421,13 +2424,22 @@
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\gpio_dev.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Areca2\ir_common.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\led.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Areca2\rc5_decode.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\remote.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Areca2\dev\misc\serial.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Areca2\sirc_decode.c</name>
                 </file>
             </group>
             <group>
@@ -2462,19 +2474,13 @@
             <name>$PROJ_DIR$\..\Areca2\control.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Areca2\factory.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Areca2\mqtt.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Areca2\nvs_api.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Areca2\thermostat_comms.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Areca2\timer.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Areca2\ZigB.c</name>
         </file>
     </group>
     <group>
